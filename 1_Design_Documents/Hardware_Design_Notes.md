@@ -1,6 +1,6 @@
 # Design_Notes/Hardware_Requirements.md
 
-## 2025-07-28: Initial Requirements (v0.5)
+## 2025-07-28: Initial Requirements (v0.1)
 ### Power
 - **Battery**: 1× or 2× 18650
 - **External**: USB-C 5V/3A (Max 15W)
@@ -20,7 +20,7 @@
 - **Battery Status LED**:
   - Bi-color (Red/Green)
 
-## 2025-08-10: Update Requirements (v1.0)
+## 2025-08-10: Update Requirements (v0.2)
 ### Power
 - **Battery**: 1× or 2× 18650
 - **External**: USB-C 5V/2A (Max 10W)
