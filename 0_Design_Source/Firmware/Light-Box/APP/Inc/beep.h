@@ -1,9 +1,6 @@
 /**
-  ******************************************************************************
   * @file    beep.h
-  * @brief   This file provides code for beep operations
-  *          the beep.c file
-  ******************************************************************************
+  * @brief   function prototypes for the beep.c file
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -15,8 +12,8 @@ extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
+#include "FreeRTOS.h"
+#include "timers.h"
 
 /* Define beep operaiton -----------------------------------------------------*/
 #define BEEP_ON()     HAL_GPIO_WritePin(Beep_Ctrl_GPIO_Port, Beep_Ctrl_Pin, GPIO_PIN_SET)

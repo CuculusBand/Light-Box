@@ -1,9 +1,6 @@
 /**
-  ******************************************************************************
   * @file    beep.c
-  * @brief   This file contains all the function prototypes for
-  *          the beep.c file
-  ******************************************************************************
+  * @brief   Implementation of beep functions
   */
 
 /* Includes ------------------------------------------------------------------*/
