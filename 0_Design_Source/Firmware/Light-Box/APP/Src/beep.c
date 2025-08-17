@@ -9,6 +9,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "beep.h"
+#include "FreeRTOS.h"
+#include "timers.h"
+#include "task.h"
+
 
 /* Beep operations -----------------------------------------------------------*/
 /* Directly set beep state */
