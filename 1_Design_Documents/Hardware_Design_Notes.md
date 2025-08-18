@@ -1,4 +1,4 @@
-# Design_Notes/Hardware_Requirements.md
+# Design_Notes/Hardware_Requirements
 
 ## 2025-07-28: Initial Requirements (v0.1)
 ### Power
