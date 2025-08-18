@@ -29,7 +29,7 @@ void PWM_App_Init(void) {
 
 // Update PWM duty cycle
 /**
-    * @brief    Update PWM duty cycles for brightness and color temperature 
+    * @brief    Update PWM duty cycles for brightness and color temperature
     * @note     Warm = (1 - CCT) * Brightness, Cool = CCT * Brightness
     * @param    brightness  [ 0.0 , 1.0 ]
     * @param    cct_level   [ 0.0 , 1.0 ]
