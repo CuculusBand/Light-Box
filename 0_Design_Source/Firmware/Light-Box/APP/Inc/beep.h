@@ -10,13 +10,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "FreeRTOS.h"
 #include "timers.h"
 
-/* Define beep operaiton -----------------------------------------------------*/
+/* Define beep start operaiton */
 #define BEEP_ON()     HAL_GPIO_WritePin(Beep_Ctrl_GPIO_Port, Beep_Ctrl_Pin, GPIO_PIN_SET)
+/* Define beep stop operaiton */
 #define BEEP_OFF()    HAL_GPIO_WritePin(Beep_Ctrl_GPIO_Port, Beep_Ctrl_Pin, GPIO_PIN_RESET)
 
 /* Define beep structure */
