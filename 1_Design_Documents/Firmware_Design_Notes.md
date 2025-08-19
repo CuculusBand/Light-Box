@@ -3,19 +3,25 @@
 ## 2025-08-15: Initial Requirements (v0.1)
 ### Beep
   - Beep to inform the user of the action of the equipment
+
 ### Mixedlight switch
   - Determine which parameter is adjusted by the encoder currently
+
 ### Encoder
   - Adjust brightness level or color temperature level
   > The adjustment target is selected by Mixedlight switch
 
   > Update brightness level or color temperature level for PWM output
+
 ### PWM
   - **Calculate and set parameters of TIMs**:
   > Warm = (1 - CCT) * Brightness ->  Warm * ARR
 
   > Cool = CCT * Brightness       ->  Cool * ARR
-  
+
+### NTC
+  - **Measure the temperature of the boards**
+
 ---
 # Design_Notes/Firmware_funtion
 
