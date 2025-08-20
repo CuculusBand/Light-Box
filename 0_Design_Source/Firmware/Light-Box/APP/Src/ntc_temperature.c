@@ -47,7 +47,8 @@ NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t had
     * @param    config  Pointer to the NTC_Measurement_Config_t structure
     * @return   Calculated NTC resistance in ohms, or -1.0f if an error occurs
     */
-float NTC_GetResistance(NTC_Measurement_Config_t* config) {
+float NTC_GetResistance(NTC_Measurement_Config_t* config)
+{
     uint32_t adc_value;
     float voltage, resistance;
     ADC_ChannelConfTypeDef sConfig = {0};
@@ -88,7 +89,8 @@ float NTC_GetResistance(NTC_Measurement_Config_t* config) {
  * @param   config  Pointer to the NTC_Measurement_Config_t structure
  * @return  Calculated temperature in degrees Celsius, or -1.0f if an error occurs
  */
-float NTC_GetTemperature(NTC_Measurement_Config_t* config) {
+float NTC_GetTemperature(NTC_Measurement_Config_t* config)
+{
     float resistance, temperature;
     // Get the NTC resistance
     resistance = NTC_GetResistance(config);
