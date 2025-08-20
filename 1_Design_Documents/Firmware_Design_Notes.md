@@ -37,7 +37,7 @@
 
   - **Timer callback for beep**
   
- ` static void Beep_TimerCallback(TimerHandle_t xTimer)`
+  `static void Beep_TimerCallback(TimerHandle_t xTimer)`
 
   - **Non-blocking beep**
   
@@ -81,3 +81,20 @@
   - **Update PWM duty cycle**
   
   `void PWM_App_Update(float brightness, float cct_level)`
+
+### NTC
+  - **Configuration for NTC temperature measurement**
+  
+  `NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, float vref, float r_ref, float r_ntc_25c, float b_value)`
+
+  - **Get ADC value and calculate NTC resistance**
+  
+  `float NTC_GetResistance(NTC_Measurement_Config_t* config)`
+
+  - **Calculate temperature from NTC resistance**
+  
+  `float NTC_GetTemperature(NTC_Measurement_Config_t* config)`
+
+  - **Non-blocking beep**
+  
+  `void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms)`
