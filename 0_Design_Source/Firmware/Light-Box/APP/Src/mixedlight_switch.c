@@ -45,10 +45,11 @@ void MixedlightSwitch_UpdateCurrentMode(void)
             
             // Change mode
             current_mode = (current_mode == MODE_Temperature) ? MODE_Brightness : MODE_Temperature;
-            
+
             // Send the new mode to the queue
             if (xEncoderQueue != NULL) {
-                xQueueSend(xEncoderQueue, &current_mode, 0);
+                EncoderMode_t mode_to_send = current_mode;
+                xQueueSend(xEncoderQueue, &mode_to_send, 0);
             }
         }
     }

@@ -55,8 +55,8 @@ void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms)
         (void *)0,                      // parameter passed to the callback
         Beep_TimerCallback              // set the callback function
     );
-    if (buzzer_timer != NULL) {
+    if (beep_timer != NULL) {
         BEEP_ON();                    // start beep
-        xTimerStart(buzzer_timer, 0);   // start the timer
+        xTimerStart(beep_timer, 0);   // start the timer
     }
 }

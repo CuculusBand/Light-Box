@@ -6,7 +6,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "FreeRTOS.h"
-#include "mode_switch.h"
+#include "mixedlight_switch.h"
 #include "gpio.h"
 
 #include "pwm_app.h"
@@ -22,7 +22,8 @@ extern TIM_HandleTypeDef htim16;
  * @brief   Initialize PWM for light control
  * @note    This function starts the PWM channels for brightness and color temperature control.
  */
-void PWM_App_Init(void) {
+void PWM_App_Init(void)
+{
     HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
 }

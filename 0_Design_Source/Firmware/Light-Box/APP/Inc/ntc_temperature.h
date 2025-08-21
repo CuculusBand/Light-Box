@@ -12,13 +12,13 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
+#include "stm32g0xx_hal.h"
 #include "main.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include <math.h>
-#include "stm32f1xx_hal_adc.h"
-#include "stm32f1xx_hal_gpio.h"
+#include "stm32g0xx_hal_adc.h"
+#include "stm32g0xx_hal_gpio.h"
 
 /* Temperature measurement parameters */
 typedef struct {

@@ -24,9 +24,9 @@ typedef enum {
 } EncoderMode_t;
 
 /* Create the encoder queue for mode switching */
-void MixedlightSwitch_init(void)
+void MixedlightSwitch_init(void);
 /* Get current adjustment target mode */
-EncoderMode_t MixedlightSwitch_UpdateCurrentMode(void);
+void MixedlightSwitch_UpdateCurrentMode(void);
 /* Switch adjustment target mode */
 extern QueueHandle_t xEncoderQueue;  // Queue for encoder mode switching
 

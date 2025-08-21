@@ -4,13 +4,13 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
+#include "stm32g0xx_hal.h"
 #include "main.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include <math.h>
-#include "stm32f1xx_hal_adc.h"
-#include "stm32f1xx_hal_gpio.h"
+#include "stm32g0xx_hal_adc.h"
+#include "stm32g0xx_hal_gpio.h"
 
 #include "ntc_temperature.h"
 
@@ -50,7 +50,7 @@ NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t had
 float NTC_GetResistance(NTC_Measurement_Config_t* config)
 {
     uint32_t adc_value;
-    float voltage, resistance;
+    float resistance;
     ADC_ChannelConfTypeDef sConfig = {0};
     
     if (config->adc_handle == NULL) {
@@ -60,7 +60,7 @@ float NTC_GetResistance(NTC_Measurement_Config_t* config)
     // Configure the ADC channel
     sConfig.Channel = config->adc_channel;
     sConfig.Rank = 1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES;
+    sConfig.SamplingTime = ADC_SAMPLETIME_19CYCLES_5;
     HAL_ADC_ConfigChannel(config->adc_handle, &sConfig);
     
     // Start ADC conversion and get the value
@@ -70,7 +70,7 @@ float NTC_GetResistance(NTC_Measurement_Config_t* config)
     HAL_ADC_Stop(config->adc_handle);
     
     // Calculate the voltage across the NTC thermistor
-    Vadc = (float)adc_value * config->vref / config->adc_resolution;
+    float Vadc = (float)adc_value * config->vref / config->adc_resolution;
     
     // Check if the voltage is within a valid range
     if (Vadc < 0.001f || Vadc > (config->vref - 0.001f)) {
@@ -95,14 +95,14 @@ float NTC_GetTemperature(NTC_Measurement_Config_t* config)
     // Get the NTC resistance
     resistance = NTC_GetResistance(config);
     
-    if (resistance = -1f) {
-        return -999;        // error in resistance measurement
+    if (resistance == -1.0f) {
+        return -999.0;        // error in resistance measurement
     }
-    if (resistance >= 320f) {
+    if (resistance >= 320.0f) {
         return -273.15f;    // invalid resistance, return absolute zero
     }
     if (resistance < 0.45f) {
-        return 110f;        // invalid resistance, return a high temperature
+        return 110.0f;        // invalid resistance, return a high temperature
     }
     
     // Calculate temperature

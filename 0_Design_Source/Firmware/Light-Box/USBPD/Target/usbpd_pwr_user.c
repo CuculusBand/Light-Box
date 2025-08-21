@@ -27,6 +27,8 @@
 #endif /* _TRACE */
 
 /* USER CODE BEGIN include */
+//#include "usbpd_pwr_user_conf.h"
+#include "main.h"
 
 /* USER CODE END include */
 
