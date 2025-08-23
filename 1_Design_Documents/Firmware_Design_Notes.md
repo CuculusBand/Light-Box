@@ -23,6 +23,13 @@
   - **Measure the temperature of the boards**
 
 ---
+# Design_Notes/Firmware_tasks
+- mainTask
+- AdjustLight
+- AdjustTarget
+- OutputMode
+
+---
 # Design_Notes/Firmware_funtion
 
 ## Functions called in the tasks
@@ -95,6 +102,5 @@
   
   `float NTC_GetTemperature(NTC_Measurement_Config_t* config)`
 
-  - **Non-blocking beep**
-  
-  `void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms)`
+### USBPD
+
