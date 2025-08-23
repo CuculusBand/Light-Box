@@ -48,7 +48,7 @@
 
 /* USER CODE END Variables */
 osThreadId mainTaskHandle;
-osThreadId AdjustLighHandle;
+osThreadId AdjustLightHandle;
 osThreadId AdjustTargetHandle;
 osThreadId OutputModeHandle;
 
@@ -95,9 +95,9 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(mainTask, StartDefaultTask, osPriorityNormal, 0, 256);
   mainTaskHandle = osThreadCreate(osThread(mainTask), NULL);
 
-  /* definition and creation of AdjustLigh */
-  osThreadDef(AdjustLigh, Run_AdjustLightOutput, osPriorityAboveNormal, 0, 128);
-  AdjustLighHandle = osThreadCreate(osThread(AdjustLigh), NULL);
+  /* definition and creation of AdjustLight */
+  osThreadDef(AdjustLight, Run_AdjustLightOutput, osPriorityAboveNormal, 0, 128);
+  AdjustLightHandle = osThreadCreate(osThread(AdjustLight), NULL);
 
   /* definition and creation of AdjustTarget */
   osThreadDef(AdjustTarget, Run_AdjustTargetChange, osPriorityBelowNormal, 0, 128);
@@ -133,7 +133,7 @@ void StartDefaultTask(void const * argument)
 
 /* USER CODE BEGIN Header_Run_AdjustLightOutput */
 /**
-* @brief Function implementing the AdjustLigh thread.
+* @brief Function implementing the AdjustLight thread.
 * @param argument: Not used
 * @retval None
 */
