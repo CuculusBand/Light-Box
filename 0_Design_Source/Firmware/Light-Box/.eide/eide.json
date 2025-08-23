@@ -8,7 +8,8 @@
     "Middlewares",
     "USBPD",
     "Utilities",
-    "APP"
+    "APP",
+    "Tasks"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
