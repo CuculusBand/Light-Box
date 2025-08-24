@@ -5,10 +5,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "FreeRTOS.h"
-#include "gpio.h"
-#include "stm32g0xx_hal.h"
-#include "stm32g0xx_hal_gpio.h"
+#include <stdlib.h>
 
 #include "shortcut.h"
 

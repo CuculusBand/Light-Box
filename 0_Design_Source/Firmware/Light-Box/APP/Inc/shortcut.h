@@ -13,9 +13,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
+#include <stdlib.h>
 
 /* Shortcut action types */
 typedef enum {
@@ -26,8 +24,8 @@ typedef enum {
 
 /* Light state structure storing brightness and color temperature for shortcut functionality */
 typedef struct {
-    float saved_brightness;  // saved brightness (0.0-1.0)
-    float saved_cct_level;   // saved cct level (0.0-1.0)
+    float brightness;  // saved brightness (0.0-1.0)
+    float cct_level;   // saved cct level (0.0-1.0)
     uint8_t is_valid;        // whether a state is saved (1) or not (0)
 } LightState_t;
 
