@@ -28,7 +28,7 @@ void MixedlightSwitch_init(void)
     xEncoderQueue = xQueueCreate(5, sizeof(EncoderMode_t));
 }
 
-// Update Current Mode
+// Update current adjustment target
 /**
     * @brief    Update the current adjustment target mode based on button press
     * @note     This function should be called periodically to check the button state.
