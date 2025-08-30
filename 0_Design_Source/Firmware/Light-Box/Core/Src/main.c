@@ -29,7 +29,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "beep.h"
+#include "encoder.h"
+#include "shortcut.h"
+#include "pwm_app.h"
+#include "mixedlight_switch.h"
+#include "ntc_temperature.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,11 +109,13 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-
+  Beep_Blocking(25);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  MX_USBPD_Init();
+  Beep_NonBlocking(NULL, 100);
+  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
