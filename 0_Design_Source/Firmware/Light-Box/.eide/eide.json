@@ -46,7 +46,7 @@
       "uploadConfig": {
         "bin": "",
         "proType": "SWD",
-        "resetMode": "default",
+        "resetMode": "HWrst",
         "runAfterProgram": true,
         "speed": 4000,
         "address": "0x08000000",
