@@ -109,12 +109,11 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(25);
+  Beep_Blocking(100);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
   MX_USBPD_Init();
-  Beep_NonBlocking(500);
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
