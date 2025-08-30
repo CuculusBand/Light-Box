@@ -109,7 +109,10 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(100);
+  HAL_Delay(1000);
+  Beep_Blocking(50);
+  HAL_Delay(100);
+  Beep_Blocking(200);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
