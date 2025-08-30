@@ -22,13 +22,7 @@ extern "C" {
 /* Define beep stop operaiton */
 #define BEEP_OFF()    HAL_GPIO_WritePin(Beep_Ctrl_GPIO_Port, Beep_Ctrl_Pin, GPIO_PIN_RESET)
 
-/* Define beep structure */
-typedef struct {
-    TimerHandle_t timer_handle;  // get the start time of the beep from the timer
-    uint32_t duration_ms; // time for beep duration
-    uint8_t is_active;    // beep state
-} Beep_OSHandleTypeDef;
-
+/* Private variables ---------------------------------------------------------*/
 extern osTimerId beepTimerId;
 
 /* Directly set beep state */
