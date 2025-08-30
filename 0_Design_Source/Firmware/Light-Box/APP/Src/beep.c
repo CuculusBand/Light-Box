@@ -10,6 +10,9 @@
 #include "timers.h"
 #include "task.h"
 
+/* Private variables ---------------------------------------------------------*/
+osTimerId beepTimerId;
+
 // Directly set beep state
 /**
     * @brief    Set the beep state (on/off)
@@ -37,7 +40,8 @@ void Beep_Blocking(uint32_t duration_ms)
     * @brief    Timer callback to turn off the beep
     * @note     This function is called when the beep duration timer expires.
     */
-static void Beep_TimerCallback(TimerHandle_t xTimer) {
+static void Beep_TimerCallback(void const *argument) {
+    (void)argument;
     BEEP_OFF();
 }
 
@@ -46,17 +50,12 @@ static void Beep_TimerCallback(TimerHandle_t xTimer) {
     * @brief Make a non-blocking beep for a specified duration
     * @note	This function starts a timer to turn off the beep after the specified duration.
     */
-void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms)
+void Beep_NonBlocking(uint32_t duration_ms)
 {
-    TimerHandle_t beep_timer = xTimerCreate(
-        "BeepTimer",                    // name of the timer
-        pdMS_TO_TICKS(duration_ms),     // beep duration in ticks
-        pdFALSE,                        // single shot timer
-        (void *)0,                      // parameter passed to the callback
-        Beep_TimerCallback              // set the callback function
-    );
-    if (beep_timer != NULL) {
-        BEEP_ON();                    // start beep
-        xTimerStart(beep_timer, 0);   // start the timer
+    osTimerDef(beepTimer, Beep_TimerCallback);
+    osTimerId beepTimerId = osTimerCreate(osTimer(beepTimer), osTimerOnce, NULL);
+    if (beepTimerId != NULL) {
+        BEEP_ON();                            // start beep
+        osTimerStart(beepTimerId, duration_ms); // start the timer
     }
 }

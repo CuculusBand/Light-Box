@@ -114,7 +114,7 @@ int main(void)
 
   /* USBPD initialisation ---------------------------------*/
   MX_USBPD_Init();
-  Beep_NonBlocking(NULL, 100);
+  Beep_NonBlocking(500);
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 

@@ -13,6 +13,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "FreeRTOS.h"
 #include "timers.h"
 
@@ -28,12 +29,15 @@ typedef struct {
     uint8_t is_active;    // beep state
 } Beep_OSHandleTypeDef;
 
+extern osTimerId beepTimerId;
+
 /* Directly set beep state */
 void Beep_SetState(uint8_t state);
 /* Blocking beep operation */
 void Beep_Blocking(uint32_t duration_ms);
 /* Non-blocking beep operation */
-void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms);
+//void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms);
+void Beep_NonBlocking(uint32_t duration_ms);
 
 #ifdef __cplusplus
 }
