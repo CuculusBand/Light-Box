@@ -24,7 +24,8 @@ extern "C" {
 #define BRIGHTNESS_MIN    0.0f  // 0.0 ~ 1.0 range for brightness
 #define BRIGHTNESS_MAX    1.0f  // 0.0 ~ 1.0 range for brightness
 #define CCT_LEVEL_MIN     0.0f  // 0.0 ~ 1.0 range for color temperature
-#define CCT_LEVEL_MAX     1.0f  // 0.0 ~ 1.0 range for color temperature
+//  #define CCT_LEVEL_MAX     1.0f  // 0.0 ~ 1.0 range for color temperature
+#define CCT_LEVEL_MAX     0.8f  // 0.0 ~ 0.8 range for color temperature
 /* Encoder step size */
 #define ENCODER_BASE_STEP 0.005f  // base step size
 #define ENCODER_MAX_STEP  0.1f    // max step size
