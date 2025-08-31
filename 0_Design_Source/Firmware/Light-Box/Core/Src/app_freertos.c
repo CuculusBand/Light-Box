@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "usart.h"
-#include "Temperature_Task.h"
+#include "beep.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -172,6 +172,7 @@ void Run_AdjustTargetChange(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+    Beep_Blocking(25);
     osDelay(100);
   }
   /* USER CODE END Run_AdjustTargetChange */
