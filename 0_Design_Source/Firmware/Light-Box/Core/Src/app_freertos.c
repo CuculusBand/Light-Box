@@ -134,7 +134,7 @@ void StartDefaultTask(void const * argument)
   //Temperature_Task(NULL);
   for(;;)
   {
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -150,11 +150,11 @@ void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
   sprintf(msg_task_init1, "adjust light output task...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 100);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 100);
+    osDelay(100);
   }
   /* USER CODE END Run_AdjustLightOutput */
 }
@@ -172,7 +172,7 @@ void Run_AdjustTargetChange(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END Run_AdjustTargetChange */
 }
@@ -190,7 +190,7 @@ void Run_OutputModeChange(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END Run_OutputModeChange */
 }

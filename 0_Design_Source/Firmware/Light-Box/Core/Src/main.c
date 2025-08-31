@@ -127,7 +127,7 @@ int main(void)
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  // MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
   sprintf(msg_initB, "USBPD INIT...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_initB, strlen(msg_initB), 100);
 
