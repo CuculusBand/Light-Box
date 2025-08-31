@@ -73,8 +73,8 @@ void Error_Handler(void);
 #define VDDA_APPLI 3300
 #define Adjustment_Target_SW_Pin GPIO_PIN_9
 #define Adjustment_Target_SW_GPIO_Port GPIOB
-#define Temp___Pin GPIO_PIN_0
-#define Temp___GPIO_Port GPIOA
+#define Temp_1_Pin GPIO_PIN_0
+#define Temp_1_GPIO_Port GPIOA
 #define Temp_2_Pin GPIO_PIN_1
 #define Temp_2_GPIO_Port GPIOA
 #define GPIO3_Pin GPIO_PIN_3
