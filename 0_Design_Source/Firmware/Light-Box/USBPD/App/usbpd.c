@@ -23,6 +23,7 @@
 #include "gui_api.h"
 
 /* USER CODE BEGIN 0 */
+#include "beep.h"
 /* USER CODE END 0 */
 
 /* USER CODE BEGIN 1 */
@@ -69,6 +70,7 @@ void MX_USBPD_Init(void)
   /* USER CODE BEGIN EnableIRQ */
   /* Enable IRQ which has been disabled by FreeRTOS services */
   __enable_irq();
+  Beep_Blocking(100); // Notify that USBPD is initialized
   /* USER CODE END EnableIRQ */
 
 }
