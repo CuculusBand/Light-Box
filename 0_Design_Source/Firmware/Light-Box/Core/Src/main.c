@@ -29,6 +29,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "beep.h"
 #include "encoder.h"
 #include "shortcut.h"
@@ -109,20 +112,36 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(75);
-  HAL_Delay(200);
-  Beep_Blocking(25);
-  HAL_Delay(800);
+  Beep_Blocking(100);
+  HAL_Delay(300);
+  Beep_Blocking(100);
+  HAL_Delay(300);
+  Encoder_Init(&htim2); // Initialize encoder interface
+  PWM_App_Init();       // Initialize PWM application
+  char msg_initA[35];
+  char msg_initB[35];
+  char msg_initC[35];
+  char msg_initD[35];
+  sprintf(msg_initA, "SYS INIT...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initA, strlen(msg_initA), 100);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  MX_USBPD_Init();
+  //  MX_USBPD_Init();
   /* Call init function for freertos objects (in cmsis_os2.c) */
+  Beep_Blocking(50);
+  HAL_Delay(125);
+  sprintf(msg_initB, "USBPD INIT...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initB, strlen(msg_initB), 100);
   MX_FREERTOS_Init();
 
   /* Start scheduler */
-  osKernelStart();
+  //Beep_Blocking(50);
+  sprintf(msg_initC, "Kernel STARTing...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initC, strlen(msg_initC), 100);
 
+  osKernelStart();
+  //Beep_Blocking(125);
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
@@ -130,7 +149,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    sprintf(msg_initD, "Kernel FAILED...\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_initD, strlen(msg_initD), 100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
