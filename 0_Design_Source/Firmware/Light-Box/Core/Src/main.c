@@ -109,15 +109,15 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(50);
-  HAL_Delay(100);
-  Beep_Blocking(50);
+  Beep_Blocking(75);
+  HAL_Delay(200);
+  Beep_Blocking(25);
   HAL_Delay(800);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
   MX_USBPD_Init();
-  Beep_Blocking(1500);
+  Beep_Blocking(100);
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
