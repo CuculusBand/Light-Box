@@ -20,8 +20,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32g0xx_it.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "usbpd.h"
 #include "tracer_emb.h"
+#include "gui_api.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -65,8 +68,6 @@ extern TIM_HandleTypeDef htim16;
 extern TIM_HandleTypeDef htim17;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart1;
-extern TIM_HandleTypeDef htim6;
-
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -102,6 +103,30 @@ void HardFault_Handler(void)
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
+}
+
+/**
+  * @brief This function handles System tick timer.
+  */
+void SysTick_Handler(void)
+{
+  /* USER CODE BEGIN SysTick_IRQn 0 */
+
+  /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
+#if (INCLUDE_xTaskGetSchedulerState == 1 )
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+  {
+#endif /* INCLUDE_xTaskGetSchedulerState */
+  xPortSysTickHandler();
+#if (INCLUDE_xTaskGetSchedulerState == 1 )
+  }
+#endif /* INCLUDE_xTaskGetSchedulerState */
+  USBPD_DPM_TimerCounter();
+  // GUI_TimerCounter();
+  /* USER CODE BEGIN SysTick_IRQn 1 */
+
+  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -193,20 +218,6 @@ void TIM3_IRQHandler(void)
   /* USER CODE BEGIN TIM3_IRQn 1 */
 
   /* USER CODE END TIM3_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM6, DAC1 and LPTIM1 interrupts (LPTIM1 interrupt through EXTI line 29).
-  */
-void TIM6_DAC_LPTIM1_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM6_DAC_LPTIM1_IRQn 0 */
-
-  /* USER CODE END TIM6_DAC_LPTIM1_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  /* USER CODE BEGIN TIM6_DAC_LPTIM1_IRQn 1 */
-
-  /* USER CODE END TIM6_DAC_LPTIM1_IRQn 1 */
 }
 
 /**

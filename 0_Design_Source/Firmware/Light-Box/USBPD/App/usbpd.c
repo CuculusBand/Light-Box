@@ -51,7 +51,7 @@ void MX_USBPD_Init(void)
   }
 
   /* Initialize GUI before retrieving PDO from RAM */
-  //  GUI_Init(BSP_GetBoardName, BSP_GetBoardID, HW_IF_PWR_GetVoltage, HW_IF_PWR_GetCurrent);
+  // GUI_Init(BSP_GetBoardName, BSP_GetBoardID, HW_IF_PWR_GetVoltage, HW_IF_PWR_GetCurrent);
 
   /* Initialise the DPM application */
   if (USBPD_OK != USBPD_DPM_UserInit())

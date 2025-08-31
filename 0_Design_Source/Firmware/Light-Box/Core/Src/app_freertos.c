@@ -49,7 +49,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-char msg_task_init[50];
+char msg_task_init0[100];
+char msg_task_init1[100];
 /* USER CODE END Variables */
 osThreadId mainTaskHandle;
 osThreadId AdjustLightHandle;
@@ -127,8 +128,8 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  sprintf(msg_task_init, "main task...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 100);
+  sprintf(msg_task_init0, "main task...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   /* Infinite loop */
   //Temperature_Task(NULL);
   for(;;)
@@ -148,8 +149,8 @@ void StartDefaultTask(void const * argument)
 void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
-  sprintf(msg_task_init, "adjust light output task...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 100);
+  sprintf(msg_task_init1, "adjust light output task...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 100);
   /* Infinite loop */
   for(;;)
   {

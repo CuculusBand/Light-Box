@@ -127,21 +127,16 @@ int main(void)
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  //  MX_USBPD_Init();
-  /* Call init function for freertos objects (in cmsis_os2.c) */
-  Beep_Blocking(50);
-  HAL_Delay(125);
+  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
   sprintf(msg_initB, "USBPD INIT...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_initB, strlen(msg_initB), 100);
+
   MX_FREERTOS_Init();
-
-  /* Start scheduler */
-  //Beep_Blocking(50);
-  sprintf(msg_initC, "Kernel STARTing...\r\n");
+  sprintf(msg_initC, "FREERTOS INIT...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_initC, strlen(msg_initC), 100);
-
+  /* Start scheduler */
   osKernelStart();
-  //Beep_Blocking(125);
+
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
@@ -149,8 +144,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    sprintf(msg_initD, "Kernel FAILED...\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg_initD, strlen(msg_initD), 100);
+  sprintf(msg_initD, "osKernel FAILED...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initD, strlen(msg_initD), 100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -205,28 +200,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6)
-  {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
