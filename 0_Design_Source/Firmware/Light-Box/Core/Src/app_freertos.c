@@ -49,8 +49,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-char msg_task_init0[100];
-char msg_task_init1[100];
+char msg_task_init0[128];
+char msg_task_init1[128];
+char msg_task_init2[128];
+char msg_task_init3[128];
 /* USER CODE END Variables */
 osThreadId mainTaskHandle;
 osThreadId AdjustLightHandle;
@@ -99,15 +101,12 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of mainTask */
   osThreadDef(mainTask, StartDefaultTask, osPriorityNormal, 0, 256);
   mainTaskHandle = osThreadCreate(osThread(mainTask), NULL);
-
   /* definition and creation of AdjustLight */
   osThreadDef(AdjustLight, Run_AdjustLightOutput, osPriorityAboveNormal, 0, 128);
   AdjustLightHandle = osThreadCreate(osThread(AdjustLight), NULL);
-
   /* definition and creation of AdjustTarget */
   osThreadDef(AdjustTarget, Run_AdjustTargetChange, osPriorityBelowNormal, 0, 128);
   AdjustTargetHandle = osThreadCreate(osThread(AdjustTarget), NULL);
-
   /* definition and creation of OutputMode */
   osThreadDef(OutputMode, Run_OutputModeChange, osPriorityAboveNormal, 0, 256);
   OutputModeHandle = osThreadCreate(osThread(OutputMode), NULL);
@@ -129,12 +128,15 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   sprintf(msg_task_init0, "main task...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
+  osDelay(10);
   /* Infinite loop */
   //Temperature_Task(NULL);
   for(;;)
   {
-    osDelay(100);
+    // osDelay(250);
+    // Beep_Blocking(30);
+    osDelay(2000);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -149,11 +151,12 @@ void StartDefaultTask(void const * argument)
 void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
-  sprintf(msg_task_init1, "adjust light output task...\r\n");
+  osDelay(50);
+  sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 200);
   /* Infinite loop */
   for(;;)
   {
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 100);
     osDelay(100);
   }
   /* USER CODE END Run_AdjustLightOutput */
@@ -169,11 +172,13 @@ void Run_AdjustLightOutput(void const * argument)
 void Run_AdjustTargetChange(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustTargetChange */
+  osDelay(150);
+  sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 200);
   /* Infinite loop */
   for(;;)
   {
-    Beep_Blocking(25);
-    osDelay(100);
+    osDelay(1500);
   }
   /* USER CODE END Run_AdjustTargetChange */
 }
@@ -188,6 +193,9 @@ void Run_AdjustTargetChange(void const * argument)
 void Run_OutputModeChange(void const * argument)
 {
   /* USER CODE BEGIN Run_OutputModeChange */
+  osDelay(250);
+  sprintf(msg_task_init3, "OutputModeChange...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
   /* Infinite loop */
   for(;;)
   {

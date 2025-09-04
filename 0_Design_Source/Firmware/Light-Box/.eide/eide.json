@@ -6,8 +6,6 @@
     "Core",
     "Drivers",
     "Middlewares",
-    "USBPD",
-    "Utilities",
     "APP",
     "Tasks"
   ],

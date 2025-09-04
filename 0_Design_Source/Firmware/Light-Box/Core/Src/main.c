@@ -115,12 +115,10 @@ int main(void)
   HAL_Delay(300);
   Encoder_Init(&htim2); // Initialize encoder interface
   PWM_App_Init();       // Initialize PWM application
-  char msg_initA[35];
-  char msg_initB[35];
-  char msg_initC[35];
-  char msg_initD[35];
-  sprintf(msg_initA, "SYS INIT...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initA, strlen(msg_initA), 100);
+  char msg_init[35];
+  char msg_failure[35];
+  sprintf(msg_init, "SYS INITIALIZATION SUCCESS!\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
@@ -136,7 +134,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+  sprintf(msg_failure, "FREERTOS FAILED!\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_failure, strlen(msg_failure), 100);
+  HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
