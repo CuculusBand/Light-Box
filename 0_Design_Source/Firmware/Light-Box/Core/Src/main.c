@@ -110,11 +110,9 @@ int main(void)
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   Beep_Blocking(100);
-  HAL_Delay(300);
+  HAL_Delay(200);
   Beep_Blocking(100);
-  HAL_Delay(300);
-  Encoder_Init(&htim2); // Initialize encoder interface
-  PWM_App_Init();       // Initialize PWM application
+  HAL_Delay(200);
   char msg_init[35];
   char msg_failure[35];
   sprintf(msg_init, "SYS INITIALIZATION SUCCESS!\r\n");

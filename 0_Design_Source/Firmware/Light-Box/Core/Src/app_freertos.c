@@ -28,8 +28,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "adc.h"
+#include "dma.h"
+#include "tim.h"
 #include "usart.h"
+#include "gpio.h"
 #include "beep.h"
+#include "encoder.h"
+#include "pwm_app.h"
+#include "mixedlight_switch.h"
+#include "ntc_temperature.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -128,7 +136,12 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   sprintf(msg_task_init0, "main task...\r\n");
+  Encoder_Init(&htim2); // Initialize encoder interface
   osDelay(10);
+  PWM_App_Init();       // Initialize PWM application
+  osDelay(200);
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
+  osDelay(50);
   /* Infinite loop */
   //Temperature_Task(NULL);
   for(;;)
@@ -136,7 +149,6 @@ void StartDefaultTask(void const * argument)
     // osDelay(250);
     // Beep_Blocking(30);
     osDelay(2000);
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -151,7 +163,7 @@ void StartDefaultTask(void const * argument)
 void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
-  osDelay(50);
+  osDelay(10);
   sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 200);
   /* Infinite loop */
@@ -172,13 +184,13 @@ void Run_AdjustLightOutput(void const * argument)
 void Run_AdjustTargetChange(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustTargetChange */
-  osDelay(150);
+  osDelay(40);
   sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 200);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1500);
+    osDelay(100);
   }
   /* USER CODE END Run_AdjustTargetChange */
 }
@@ -193,7 +205,7 @@ void Run_AdjustTargetChange(void const * argument)
 void Run_OutputModeChange(void const * argument)
 {
   /* USER CODE BEGIN Run_OutputModeChange */
-  osDelay(250);
+  osDelay(70);
   sprintf(msg_task_init3, "OutputModeChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
   /* Infinite loop */
