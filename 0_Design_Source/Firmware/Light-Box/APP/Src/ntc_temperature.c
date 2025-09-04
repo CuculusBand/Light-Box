@@ -58,6 +58,12 @@ float NTC_GetResistance(NTC_Measurement_Config_t* config)
     }
     
     // Configure the ADC channel
+    // sConfig.Channel = config->adc_channel;
+    // sConfig.Rank = ADC_REGULAR_RANK_1;
+    // sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+    // HAL_ADC_ConfigChannel(config->adc_handle, &sConfig);
+
+    // Configure the ADC channel
     sConfig.Channel = config->adc_channel;
     sConfig.Rank = 1;
     sConfig.SamplingTime = ADC_SAMPLETIME_19CYCLES_5;

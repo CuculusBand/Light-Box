@@ -56,7 +56,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+char msg_init[35];
+char msg_failure[35];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,8 +114,6 @@ int main(void)
   HAL_Delay(200);
   Beep_Blocking(100);
   HAL_Delay(200);
-  char msg_init[35];
-  char msg_failure[35];
   sprintf(msg_init, "SYS INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
   /* USER CODE END 2 */

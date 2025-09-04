@@ -76,7 +76,7 @@ void MX_ADC1_Init(void)
   }
   /* USER CODE BEGIN ADC1_Init 2 */
   HAL_ADCEx_Calibration_Start(&hadc1);
-  HAL_ADC_Start(&hadc1);
+  // HAL_ADC_Start(&hadc1);
   /* USER CODE END ADC1_Init 2 */
 
 }

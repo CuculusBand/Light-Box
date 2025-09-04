@@ -38,6 +38,8 @@
 #include "pwm_app.h"
 #include "mixedlight_switch.h"
 #include "ntc_temperature.h"
+// task file
+#include "Temperature_Task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -148,7 +150,8 @@ void StartDefaultTask(void const * argument)
   {
     // osDelay(250);
     // Beep_Blocking(30);
-    osDelay(2000);
+    Temperature_Task(NULL);
+    osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
 }
