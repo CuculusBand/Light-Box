@@ -29,18 +29,6 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
-#include "stm32g0xx_ll_ucpd.h"
-#include "stm32g0xx_ll_bus.h"
-#include "stm32g0xx_ll_cortex.h"
-#include "stm32g0xx_ll_rcc.h"
-#include "stm32g0xx_ll_system.h"
-#include "stm32g0xx_ll_utils.h"
-#include "stm32g0xx_ll_pwr.h"
-#include "stm32g0xx_ll_gpio.h"
-#include "stm32g0xx_ll_dma.h"
-
-#include "stm32g0xx_ll_exti.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -93,8 +81,6 @@ void Error_Handler(void);
 #define VSENSE_GPIO_Port GPIOB
 #define GPIO6_Pin GPIO_PIN_2
 #define GPIO6_GPIO_Port GPIOB
-#define CC1_Pin GPIO_PIN_8
-#define CC1_GPIO_Port GPIOA
 #define ENCODER2_B_Pin GPIO_PIN_6
 #define ENCODER2_B_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_9

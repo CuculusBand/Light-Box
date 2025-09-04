@@ -22,9 +22,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "tim.h"
-#include "ucpd.h"
 #include "usart.h"
-#include "usbpd.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -106,7 +104,6 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM14_Init();
-  MX_UCPD1_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM16_Init();
@@ -126,14 +123,9 @@ int main(void)
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_initA, strlen(msg_initA), 100);
   /* USER CODE END 2 */
 
-  /* USBPD initialisation ---------------------------------*/
-  // MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
-  sprintf(msg_initB, "USBPD INIT...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initB, strlen(msg_initB), 100);
-
+  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
-  sprintf(msg_initC, "FREERTOS INIT...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initC, strlen(msg_initC), 100);
+
   /* Start scheduler */
   osKernelStart();
 
@@ -144,8 +136,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-  sprintf(msg_initD, "osKernel FAILED...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_initD, strlen(msg_initD), 100);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
