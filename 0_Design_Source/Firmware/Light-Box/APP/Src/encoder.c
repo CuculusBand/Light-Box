@@ -62,7 +62,7 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
  {
     if (htim_encoder == NULL) return; // return if not initialized
     
-    // define variables for adjustmen mode 
+    // define variables for adjustment mode 
     EncoderMode_t new_mode;
     // check if there is a new mode in the queue
     if (xQueueReceive(xEncoderQueue, &new_mode, 0) == pdTRUE) {
