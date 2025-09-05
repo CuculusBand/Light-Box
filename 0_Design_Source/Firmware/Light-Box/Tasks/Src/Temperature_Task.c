@@ -108,7 +108,7 @@ void Temperature_Task(void *argument)
         // Delay for 10ms
         osDelay(10);
         // Send temperature state to PC via UART
-        sprintf(msg_temp, "Current Temperature: <1>%sΩ %s & <2>%sΩ %s;\r\nCurrent State: %d\r\n", resistance1_buf, temperature1_buf, resistance2_buf, temperature2_buf, temp_state);
+        sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%sΩ %s\r\n<2>%sΩ %s;\r\n",temp_state, resistance1_buf, temperature1_buf, resistance2_buf, temperature2_buf);
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
         osDelay(2000); // Delay for 2 seconds before next reading
     }

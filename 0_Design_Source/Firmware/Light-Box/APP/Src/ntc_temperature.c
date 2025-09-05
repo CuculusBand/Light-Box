@@ -104,11 +104,11 @@ float NTC_GetTemperature(NTC_Measurement_Config_t* config)
     if (resistance == -1.0f) {
         return -999.0;        // error in resistance measurement
     }
-    if (resistance >= 320.0f) {
-        return -273.15f;    // invalid resistance, return absolute zero
+    if (resistance >= 320000.0f) {
+        return -273.15f;    // invalid resistance(>=320k), return absolute zero
     }
-    if (resistance < 0.45f) {
-        return 110.0f;        // invalid resistance, return a high temperature
+    if (resistance < 480.0f) {
+        return 110.0f;        // invalid resistance(<0.48k), return a high temperature
     }
     
     // Calculate temperature
