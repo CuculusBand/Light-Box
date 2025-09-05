@@ -22,13 +22,14 @@ extern "C" {
 
 /* Temperature measurement parameters */
 typedef struct {
-    ADC_HandleTypeDef* adc_handle;  // ADC handle
-    uint32_t adc_channel;           // ADC channel
-    float adc_resolution;           // ADC resolution
-    float vref;                     // reference voltage (V)
-    float r_ref;                    // divider resistor (Ω)
-    float r_ntc_25c;                // NTC resistor(@25°C) (Ω)
-    float b_value;                  // B
+    ADC_HandleTypeDef* adc_handle;      // ADC handle
+    uint32_t  adc_channel;              // ADC channel
+    float     adc_resolution;           // ADC resolution
+    uint16_t  adc_DMAindex;             // ADC DMA index
+    float     vref;                     // reference voltage (V)
+    float     r_ref;                    // divider resistor (Ω)
+    float     r_ntc_25c;                // NTC resistor(@25°C) (Ω)
+    float     b_value;                  // B
 } NTC_Measurement_Config_t;
 
 #define Default_NTC_Measurement_Config \
@@ -36,6 +37,7 @@ typedef struct {
     .adc_handle = NULL, \
     .adc_channel = 0, \
     .adc_resolution = 4096.0f, \
+    .adc_DMAindex = 0, \
     .vref = 3.3f, \
     .r_ref = 4700.0f, \
     .r_ntc_25c = 10000.0f, \
@@ -43,7 +45,7 @@ typedef struct {
 }
 
 /* Config parameters for NTC temperature measurement */
-NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, float vref, float r_ref, float r_ntc_25c, float b_value);
+NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, uint16_t adc_DMAindex, float vref, float r_ref, float r_ntc_25c, float b_value);
 /* Get ADC value */
 float NTC_GetResistance(NTC_Measurement_Config_t* config);
 /* Calculate temperature from NTC resistance */

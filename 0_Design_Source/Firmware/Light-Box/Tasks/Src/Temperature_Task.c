@@ -85,8 +85,8 @@ void Temperature_Task(void *argument)
 {
     NTC_Measurement_Config_t ntc1_config, ntc2_config;
     // Load configurations for two NTC channels
-    ntc1_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_0, 4096, 3.3f, 4700.0f, 10000.0f, 3950.0f);
-    ntc2_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_1, 4096, 3.3f, 4700.0f, 10000.0f, 3950.0f);
+    ntc1_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_0, 4096, 1, 3.3f, 4700.0f, 10000.0f, 3950.0f);
+    ntc2_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_1, 4096, 2, 3.3f, 4700.0f, 10000.0f, 3950.0f);
     char msg_temp[256]; // Buffer for UART messages
     for (;;) {
         // Read resistances from both NTC channels

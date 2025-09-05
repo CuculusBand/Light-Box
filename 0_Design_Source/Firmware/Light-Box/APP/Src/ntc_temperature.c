@@ -13,6 +13,7 @@
 #include "stm32g0xx_hal_gpio.h"
 
 #include "ntc_temperature.h"
+extern uint16_t adc_buffer[3];
 
 // Configuration for NTC temperature measurement
 /**
@@ -21,18 +22,20 @@
     * @param    hadc            Pointer to the ADC handle
     * @param    hadc_channel    ADC channel number
     * @param    hadc_resolution ADC resolution (e.g., 4096 for 12-bit ADC)
+    * @param    hadc_DMAindex   ADC DMA index
     * @param    vref            Reference voltage (V)
     * @param    r_ref           Divider resistor (Ω)
     * @param    r_ntc_25c       NTC resistor value at 25°C (Ω)
     * @param    b_value         B value of the NTC thermistor
     * @return   Initialized NTC_Measurement_Config_t structure
     */
-NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, float vref, float r_ref, float r_ntc_25c, float b_value)
+NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, uint16_t hadc_DMAindex, float vref, float r_ref, float r_ntc_25c, float b_value)
 {
     NTC_Measurement_Config_t config = Default_NTC_Measurement_Config;
     config.adc_handle = hadc;
     config.adc_channel = hadc_channel;
     config.adc_resolution = hadc_resolution;
+    config.adc_DMAindex = hadc_DMAindex;
     config.vref = vref;
     config.r_ref = r_ref;
     config.r_ntc_25c = r_ntc_25c;
@@ -45,39 +48,24 @@ NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t had
     * @brief    Get the resistance of the NTC thermistor
     * @note     This function reads the ADC value, calculates the voltage across the NTC thermistor.
     * @param    config  Pointer to the NTC_Measurement_Config_t structure
-    * @return   Calculated NTC resistance in ohms, or -1.0f if an error occurs
+    * @return   Calculated NTC resistance in ohms, -1.0f if an error occurs
     */
 float NTC_GetResistance(NTC_Measurement_Config_t* config)
 {
     uint32_t adc_value;
     float resistance;
-    ADC_ChannelConfTypeDef sConfig = {0};
+    // ADC_ChannelConfTypeDef sConfig = {0};
     
     if (config->adc_handle == NULL) {
         return -1.0f;  // invalid ADC handle
     }
-    
-    // Configure the ADC channel
-    // sConfig.Channel = config->adc_channel;
-    // sConfig.Rank = ADC_REGULAR_RANK_1;
-    // sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
-    // HAL_ADC_ConfigChannel(config->adc_handle, &sConfig);
 
-    // Configure the ADC channel
-    sConfig.Channel = config->adc_channel;
-    sConfig.Rank = 1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_19CYCLES_5;
-    HAL_ADC_ConfigChannel(config->adc_handle, &sConfig);
-    
-    // Start ADC conversion and get the value
-    HAL_ADC_Start(config->adc_handle);
-    HAL_ADC_PollForConversion(config->adc_handle, 10);  //  wait for conversion to complete
-    adc_value = HAL_ADC_GetValue(config->adc_handle);
-    HAL_ADC_Stop(config->adc_handle);
+    uint16_t DMAindex = config->adc_DMAindex;
+    adc_value = adc_buffer[DMAindex]; 
     
     // Calculate the voltage across the NTC thermistor
-    float Vadc = (float)adc_value * config->vref / config->adc_resolution;
-    
+    float Vadc = (float)adc_value * config->vref / config->adc_resolution; 
+
     // Check if the voltage is within a valid range
     if (Vadc < 0.001f || Vadc > (config->vref - 0.001f)) {
         return -1.0f;  // invalid voltage reading
