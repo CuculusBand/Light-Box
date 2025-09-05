@@ -111,12 +111,15 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of mainTask */
   osThreadDef(mainTask, StartDefaultTask, osPriorityNormal, 0, 256);
   mainTaskHandle = osThreadCreate(osThread(mainTask), NULL);
+
   /* definition and creation of AdjustLight */
   osThreadDef(AdjustLight, Run_AdjustLightOutput, osPriorityAboveNormal, 0, 128);
   AdjustLightHandle = osThreadCreate(osThread(AdjustLight), NULL);
+
   /* definition and creation of AdjustTarget */
   osThreadDef(AdjustTarget, Run_AdjustTargetChange, osPriorityBelowNormal, 0, 128);
   AdjustTargetHandle = osThreadCreate(osThread(AdjustTarget), NULL);
+
   /* definition and creation of OutputMode */
   osThreadDef(OutputMode, Run_OutputModeChange, osPriorityAboveNormal, 0, 256);
   OutputModeHandle = osThreadCreate(osThread(OutputMode), NULL);

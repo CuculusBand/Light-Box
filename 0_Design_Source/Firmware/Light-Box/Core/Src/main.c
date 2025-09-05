@@ -131,10 +131,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-  sprintf(msg_failure, "FREERTOS FAILED!\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_failure, strlen(msg_failure), 100);
-  HAL_Delay(1000);
+
     /* USER CODE BEGIN 3 */
+    HAL_Delay(200);
+    sprintf(msg_failure, "SYS INITIALIZATION SUCCESS!\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_failure, strlen(msg_failure), 100);
   }
   /* USER CODE END 3 */
 }
