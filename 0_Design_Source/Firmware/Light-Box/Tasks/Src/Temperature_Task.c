@@ -19,13 +19,17 @@
 #include "Temperature_Task.h"
 
 /* Private variables ---------------------------------------------------------*/
-float   warn_temp_lev1 = 69.0f;   // Set warning temperature level 1
-float   warn_temp_lev2 = 75.0f;   // Set warning temperature level 2
-float   safe_temp = 80.0f;        // Set maximum safe temperature
+NTC_Measurement_Config_t ntc1_config, ntc2_config;  // NTC config
+extern  ADC_HandleTypeDef hadc1;    // ADC handle defined in main.c
+float   warn_temp_lev1 = 69.0f;     // Set warning temperature level 1
+float   warn_temp_lev2 = 75.0f;     // Set warning temperature level 2
+float   safe_temp = 80.0f;          // Set maximum safe temperature
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
-float   temp_ntc1;                // Temperature from NTC1
-float   temp_ntc2;                // Temperature from NTC2
-extern  ADC_HandleTypeDef hadc1; // ADC handle defined in main.c
+float   temp_ntc1;                  // Temperature from NTC1
+float   temp_ntc2;                  // Temperature from NTC2
+char    msg_temp[256];                                 // Buffer for UART messages
+char    resistance1_buf[16], resistance2_buf[16];      // Buffer for NTC1 numbers
+char    temperature1_buf[16], temperature2_buf[16];    // Buffer for NTC2 numbers
 
 // Function prototype for temperature checking
 // Check if temperature exceeds maximum safe limit
@@ -80,45 +84,40 @@ void Output_Temp_Limit(int state)
     }
 }
 
-// Temperature monitoring task
-void Temperature_Task(void *argument)
+// Config temperature monitoring channels
+void Temperature_Channel_Config(void *argument)
 {
-    NTC_Measurement_Config_t ntc1_config, ntc2_config;
     // Load configurations for two NTC channels
     ntc1_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_0, 4096, 1, 3.3f, 4700.0f, 10000.0f, 3950.0f);
     ntc2_config = NTC_ChannelConfig(&hadc1, ADC_CHANNEL_1, 4096, 2, 3.3f, 4700.0f, 10000.0f, 3950.0f);
-    // Buffer for UART messages
-    char msg_temp[256]; 
-    // Buffer for float numbers
-    char resistance1_buf[16], resistance2_buf[16];
-    char temperature1_buf[16], temperature2_buf[16];
-    // Temperature monitor task
-    for (;;) {
+}
+
+// Temperature monitoring task
+void Temperature_Task(void *argument)
+{
         // Read resistances from both NTC channels
         float resistance1 = NTC_GetResistance(&ntc1_config);
         float resistance2 = NTC_GetResistance(&ntc2_config);
         // Convert resistances to strings for display
         float2ascii(resistance1_buf, resistance1, 3);
         float2ascii(resistance2_buf, resistance2, 3);
-        // Delay for 5ms
-        osDelay(5);
+        // Delay for 2ms
+        osDelay(2);
         // Read temperatures from both NTC channels
         temp_ntc1 = NTC_GetTemperature(&ntc1_config);
         temp_ntc2 = NTC_GetTemperature(&ntc2_config);
         // Convert temperatures to strings for display
         float2ascii(temperature1_buf, temp_ntc1, 2);
         float2ascii(temperature2_buf, temp_ntc2, 2);
-        // Delay for 5ms
-        osDelay(5);
+        // Delay for 2ms
+        osDelay(2);
         // Update temperature state based on readings
         temp_state = Temp_Level_Check(temp_ntc1, temp_ntc2);
+        // Limit output power based on the temp state
+        Output_Temp_Limit(temp_state);
+        // Delay for 10ms
+        osDelay(10);
         // Send temperature state to PC via UART
         sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%sΩ %s\r\n<2>%sΩ %s\r\n",temp_state, resistance1_buf, temperature1_buf, resistance2_buf, temperature2_buf);
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
-        // Delay for 10ms
-        osDelay(10);
-        // Limit output power based on the temp state
-        Output_Temp_Limit(temp_state);
-        osDelay(1000); // Delay for 2 seconds before next reading
-    }
 }

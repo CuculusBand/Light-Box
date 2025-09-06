@@ -149,14 +149,13 @@ void StartDefaultTask(void const * argument)
   osDelay(200);
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   osDelay(50);
+  Temperature_Channel_Config(NULL);
   /* Infinite loop */
   //Temperature_Task(NULL);
   for(;;)
   {
-    // osDelay(250);
-    // Beep_Blocking(30);
     Temperature_Task(NULL);
-    osDelay(10);
+    osDelay(2000);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -221,7 +220,7 @@ void Run_OutputModeChange(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    int VBUS = adc_buffer[0];
+    VBUS = adc_buffer[0];
     osDelay(20);
     float VBUS_voltage = 3.3/4096*VBUS*6.1;
     float2ascii(VBUS_voltage_buf, VBUS_voltage, 3);

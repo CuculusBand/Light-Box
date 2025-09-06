@@ -21,6 +21,8 @@ extern "C" {
 int Overtemp_Check(float temp1, float temp2);
 // Limit output based on temperature state
 void Output_Limit_Temp(int state);
+// Config temperature monitoring channels
+void Temperature_Channel_Config(void *argument);
 // Task of monitoring temperature using NTC thermistors
 void Temperature_Task(void *argument);
 
