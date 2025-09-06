@@ -21,7 +21,7 @@
 /* Private variables ---------------------------------------------------------*/
 NTC_Measurement_Config_t ntc1_config, ntc2_config;  // NTC config
 extern  ADC_HandleTypeDef hadc1;    // ADC handle defined in main.c
-float   warn_temp_lev1 = 50.0f;     // Set warning temperature level 1
+float   warn_temp_lev1 = 55.0f;     // Set warning temperature level 1
 float   warn_temp_lev2 = 70.0f;     // Set warning temperature level 2
 float   safe_temp = 75.0f;          // Set maximum safe temperature
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
@@ -33,26 +33,22 @@ char    temperature1_buf[16], temperature2_buf[16];    // Buffer for NTC2 number
 // Limitation of brightness based on temperature
 static float temperature_limit_factor = 1.0f; // 1.0 = 100%
 
-// Function prototype for temperature checking
-// Check if temperature exceeds maximum safe limit
-int Temp_Level_Check(float temp1, float temp2)
+// Evaluate NTC temperature level
+int NTC_Temp_Level_Check(float tempN)
 {
-    if (temp1 >= safe_temp || temp2 >= safe_temp){
+    if (tempN >= safe_temp){
         return 3; // Over safe temperature
     }
-    else if (temp1 >= warn_temp_lev2 || temp2 >= warn_temp_lev2){
+    else if (tempN >= warn_temp_lev2){
         return 2; // Warning level 2
     }
-    else if (temp1 >= warn_temp_lev1 || temp2 >= warn_temp_lev1)
-    {
+    else if (tempN >= warn_temp_lev1){
         return 1; // Warning level 1
     }
-    else if (temp1 <= -50.0 || temp2 <= -50.0)
-    {
+    else if (tempN <= -25.0){
         return -1; // unrealistic low temperature or sensor error
     }
-    else
-    {
+    else{
         return 0; // Normal temperature
     }
 }
@@ -75,26 +71,6 @@ int SYS_Temp_Level_Check(float temps[], int num_sensors)
         }
     }
     return (num_error_sensors > 0) ? -1 : max_temp_stete;
-}
-
-// Evaluate NTC temperature level
-int NTC_Temp_Level_Check(float tempN)
-{
-    if (tempN >= safe_temp){
-        return 3; // Over safe temperature
-    }
-    else if (tempN >= warn_temp_lev2){
-        return 2; // Warning level 2
-    }
-    else if (tempN >= warn_temp_lev1){
-        return 1; // Warning level 1
-    }
-    else if (tempN <= -25.0){
-        return -1; // unrealistic low temperature or sensor error
-    }
-    else{
-        return 0; // Normal temperature
-    }
 }
 
 // Action of different temperature states
@@ -160,7 +136,8 @@ void Temperature_Task(void *argument)
         // Delay for 2ms
         osDelay(2);
         // Update temperature state based on readings
-        temp_state = Temp_Level_Check(temp_ntc1, temp_ntc2);
+        float temps[] = {temp_ntc1, temp_ntc2};
+        int temp_state = SYS_Temp_Level_Check(temps, 2);
         // Limit output power based on the temp state
         Output_Temp_Limit(temp_state);
         // Delay for 10ms
