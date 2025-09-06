@@ -21,15 +21,17 @@
 /* Private variables ---------------------------------------------------------*/
 NTC_Measurement_Config_t ntc1_config, ntc2_config;  // NTC config
 extern  ADC_HandleTypeDef hadc1;    // ADC handle defined in main.c
-float   warn_temp_lev1 = 69.0f;     // Set warning temperature level 1
-float   warn_temp_lev2 = 75.0f;     // Set warning temperature level 2
-float   safe_temp = 80.0f;          // Set maximum safe temperature
+float   warn_temp_lev1 = 50.0f;     // Set warning temperature level 1
+float   warn_temp_lev2 = 70.0f;     // Set warning temperature level 2
+float   safe_temp = 75.0f;          // Set maximum safe temperature
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
 float   temp_ntc1;                  // Temperature from NTC1
 float   temp_ntc2;                  // Temperature from NTC2
 char    msg_temp[256];                                 // Buffer for UART messages
 char    resistance1_buf[16], resistance2_buf[16];      // Buffer for NTC1 numbers
 char    temperature1_buf[16], temperature2_buf[16];    // Buffer for NTC2 numbers
+// Limitation of brightness based on temperature
+static float temperature_limit_factor = 1.0f; // 1.0 = 100%
 
 // Function prototype for temperature checking
 // Check if temperature exceeds maximum safe limit
@@ -38,7 +40,7 @@ int Temp_Level_Check(float temp1, float temp2)
     if (temp1 >= safe_temp || temp2 >= safe_temp)
     {
         //Beep_NonBlocking(75);   // Beep for 75ms
-        osDelay(30);            // Short delay
+        //osDelay(30);            // Short delay
         //Beep_NonBlocking(45);   // Beep for 45ms
         return 3; // Over safe temperature
     }
@@ -66,22 +68,31 @@ void Output_Temp_Limit(int state)
     switch(state)
     {
         case 3: // Over temperature
-            // Implement actions for over temperature, e.g., reduce output power
+            temperature_limit_factor = 0.1f;
             break;
         case 2: // Warning level 2
-            // Implement actions for warning level 2, e.g., slight reduction in output
+            temperature_limit_factor = 0.6f;
             break;
         case 1: // Warning level 1
-            // Implement actions for warning level 1, e.g., monitor closely
+            temperature_limit_factor = 0.9f;
             break;
         case 0: // Normal temperature
             // Normal operation, no action needed
+            temperature_limit_factor = 1.0f;
             break;
         case -1: // Sensor error
+            temperature_limit_factor = 0.45f;
+            break;
         default:
             // No action needed
             break;
     }
+}
+
+// Allow other files to get the temperature_limit_factor
+float Temperature_Get_Limit(void)
+{
+    return temperature_limit_factor;
 }
 
 // Config temperature monitoring channels

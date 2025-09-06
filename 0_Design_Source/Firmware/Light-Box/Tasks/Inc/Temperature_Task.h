@@ -18,9 +18,11 @@ extern "C" {
 #include "ntc_temperature.h"
 /* Function prototypes -------------------------------------------------------*/
 // Check if temperature exceeds maximum safe limit
-int Overtemp_Check(float temp1, float temp2);
+int Temp_Level_Check(float temp1, float temp2);
 // Limit output based on temperature state
-void Output_Limit_Temp(int state);
+void Output_Temp_Limit(int state);
+// Allow other files to get the temperature_limit_factor
+float Temperature_Get_Limit(void);
 // Config temperature monitoring channels
 void Temperature_Channel_Config(void *argument);
 // Task of monitoring temperature using NTC thermistors

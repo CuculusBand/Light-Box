@@ -11,6 +11,7 @@
 
 #include "pwm_app.h"
 #include "encoder.h"
+#include "temperature_task.h"
 
 /* Private variables ---------------------------------------------------------*/
 // Timers for PWM control
@@ -36,12 +37,18 @@ void PWM_App_Init(void)
     * @param    cct_level   [ 0.0 , 1.0 ]
     */
 void PWM_App_Update(float brightness, float cct_level) {
+    float temperature_limit_factor = Temperature_Get_Limit();
+    // Check temperature limit
+    if(brightness > temperature_limit_factor){
+        brightness = temperature_limit_factor;
+    }
+    // Calculate the parameters of warm and cool channels
     float warm = (1.0f - cct_level) * brightness;
     float cool = cct_level * brightness;
-
+    // Get arr in TIM14 & TIM16
     uint32_t arr14 = __HAL_TIM_GET_AUTORELOAD(&htim14);
     uint32_t arr16 = __HAL_TIM_GET_AUTORELOAD(&htim16);
-
+    // Update Capture Compare register
     __HAL_TIM_SET_COMPARE(&htim14, TIM_CHANNEL_1, (uint32_t)(warm * arr14));
     __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint32_t)(cool * arr16));
 }
