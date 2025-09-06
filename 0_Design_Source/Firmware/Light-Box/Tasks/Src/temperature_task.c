@@ -37,15 +37,10 @@ static float temperature_limit_factor = 1.0f; // 1.0 = 100%
 // Check if temperature exceeds maximum safe limit
 int Temp_Level_Check(float temp1, float temp2)
 {
-    if (temp1 >= safe_temp || temp2 >= safe_temp)
-    {
-        //Beep_NonBlocking(75);   // Beep for 75ms
-        //osDelay(30);            // Short delay
-        //Beep_NonBlocking(45);   // Beep for 45ms
+    if (temp1 >= safe_temp || temp2 >= safe_temp){
         return 3; // Over safe temperature
     }
-    else if (temp1 >= warn_temp_lev2 || temp2 >= warn_temp_lev2)
-    {
+    else if (temp1 >= warn_temp_lev2 || temp2 >= warn_temp_lev2){
         return 2; // Warning level 2
     }
     else if (temp1 >= warn_temp_lev1 || temp2 >= warn_temp_lev1)
@@ -62,11 +57,50 @@ int Temp_Level_Check(float temp1, float temp2)
     }
 }
 
+// Evaluate system temperature level
+int SYS_Temp_Level_Check(float temps[], int num_sensors)
+{
+    int num_error_sensors = 0;
+    int max_temp_stete = 0;
+    if (num_sensors <= 0){
+        return -2;  // Check the number of sensors
+    }
+    for (int j = 0; j < num_sensors; j++){
+        int sensor_temp_level = NTC_Temp_Level_Check(temps[j]);
+        if (sensor_temp_level == -1){
+            num_error_sensors++;
+        }
+        if(sensor_temp_level > max_temp_stete){
+            max_temp_stete = sensor_temp_level;
+        }
+    }
+    return (num_error_sensors > 0) ? -1 : max_temp_stete;
+}
+
+// Evaluate NTC temperature level
+int NTC_Temp_Level_Check(float tempN)
+{
+    if (tempN >= safe_temp){
+        return 3; // Over safe temperature
+    }
+    else if (tempN >= warn_temp_lev2){
+        return 2; // Warning level 2
+    }
+    else if (tempN >= warn_temp_lev1){
+        return 1; // Warning level 1
+    }
+    else if (tempN <= -25.0){
+        return -1; // unrealistic low temperature or sensor error
+    }
+    else{
+        return 0; // Normal temperature
+    }
+}
+
 // Action of different temperature states
 void Output_Temp_Limit(int state)
 {
-    switch(state)
-    {
+    switch(state){
         case 3: // Over temperature
             temperature_limit_factor = 0.1f;
             break;
@@ -81,6 +115,9 @@ void Output_Temp_Limit(int state)
             temperature_limit_factor = 1.0f;
             break;
         case -1: // Sensor error
+            temperature_limit_factor = 0.45f;
+            break;
+        case -2: // No sensor
             temperature_limit_factor = 0.45f;
             break;
         default:
