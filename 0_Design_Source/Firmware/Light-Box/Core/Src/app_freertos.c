@@ -33,6 +33,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "data_format.h"
 #include "beep.h"
 #include "encoder.h"
 #include "pwm_app.h"
@@ -63,6 +64,7 @@ char msg_task_init0[128];
 char msg_task_init1[128];
 char msg_task_init2[128];
 char msg_task_init3[128];
+extern uint16_t adc_buffer[3];
 /* USER CODE END Variables */
 osThreadId mainTaskHandle;
 osThreadId AdjustLightHandle;
@@ -214,10 +216,19 @@ void Run_OutputModeChange(void const * argument)
   osDelay(70);
   sprintf(msg_task_init3, "OutputModeChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
+  char VBUS_voltage_buf[8];
+  int VBUS;
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    int VBUS = adc_buffer[0];
+    osDelay(20);
+    float VBUS_voltage = 3.3/4096*VBUS*6.1;
+    float2ascii(VBUS_voltage_buf, VBUS_voltage, 3);
+    osDelay(20);
+    sprintf(msg_task_init3, "VBUS: %s V (%d)\r\n",VBUS_voltage_buf, VBUS);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
+    osDelay(1000);
   }
   /* USER CODE END Run_OutputModeChange */
 }
