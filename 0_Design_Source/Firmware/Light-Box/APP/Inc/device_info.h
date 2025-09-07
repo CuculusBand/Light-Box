@@ -21,6 +21,7 @@ extern "C" {
 extern uint32_t uid[3];        // 96 bit STM32 UID
 extern char UID_Base32[21];    // 20 chars for Base32 + 1 for null terminator
 extern char UID_Base64URL[17]; // 16 chars for Base64URL + 1 for null terminator
+
 // Byte order selection
 typedef enum {
     UID_ENDIAN_LITTLE, // low byte first

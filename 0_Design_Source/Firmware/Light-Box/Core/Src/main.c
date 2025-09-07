@@ -57,12 +57,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-char msg_init[30];
-char msg_failure[30];
-char msg_UID[100];
-extern uint32_t uid[3];        // 96 bit STM32 UID
-extern char UID_Base32[21];    // 20 chars for Base32 + 1 for null terminator
-extern char UID_Base64URL[17]; // 16 chars for Base64URL + 1 for null terminator
+char msg_init[30];              // Initialization message
+char msg_failure[30];           // failure message
+char msg_UID[100];              // UID message
+extern uint32_t uid[3];         // 96 bit STM32 UID
+extern char UID_Base32[21];     // 20 chars for Base32 + 1 for null terminator
+extern char UID_Base64URL[17];  // 16 chars for Base64URL + 1 for null terminator
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
