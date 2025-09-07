@@ -92,7 +92,7 @@
 ### NTC
   - **Configuration for NTC temperature measurement**
   
-  `NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, float vref, float r_ref, float r_ntc_25c, float b_value)`
+  `NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, uint16_t adc_DMAindex, float vref, float r_ref, float r_ntc_25c, float b_value);`
 
   - **Get ADC value and calculate NTC resistance**
   
@@ -102,5 +102,19 @@
   
   `float NTC_GetTemperature(NTC_Measurement_Config_t* config)`
 
-### USBPD
+### Shortcut
+  - **Initialize the shortcut button handling**
 
+  `void Shortcut_Init(ShortcutHandle_t *handle)`
+
+  - **Process button press and return the detected action**
+
+  `ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)`
+
+  - **Save the current light state**
+
+  `void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float cct_level)`
+
+  - **Retrieve the saved light state**
+  
+  `LightState_t Shortcut_GetSavedState(ShortcutHandle_t *handle)`
