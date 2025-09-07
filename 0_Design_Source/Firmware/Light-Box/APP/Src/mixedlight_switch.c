@@ -13,9 +13,10 @@
 #include "mixedlight_switch.h"
 
 /* Private variables ---------------------------------------------------------*/
-static volatile EncoderMode_t current_mode = MODE_Temperature;  // Current adjustment target mode
-#define MODE_SWITCH_ACTIVE (GPIO_PIN_RESET)                     // GPIO pin state when the mode switch is active
-#define DEBOUNCE_DELAY_MS  50                                   // Debounce delay in milliseconds
+static volatile EncoderMode_t current_mode = MODE_Temperature; // Current adjustment target mode
+#define MODE_SWITCH_ACTIVE (GPIO_PIN_RESET)             // GPIO pin state when the mode switch is active
+#define DEBOUNCE_DELAY_MS  50                           // Debounce delay in milliseconds
+QueueHandle_t xEncoderQueue = NULL;                     // A queue to transfer the encoder mode
 
 // Create the encoder queue for mode switching
 /**
@@ -56,6 +57,7 @@ void MixedlightSwitch_UpdateCurrentMode(void)
 }
 
 /* Switch adjustment target */
-EncoderMode_t MixedlightSwitch_GetCurrentMode(void) {
+EncoderMode_t MixedlightSwitch_GetCurrentMode(void)
+{
     return current_mode;
 }
