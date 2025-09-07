@@ -17,8 +17,10 @@ extern "C" {
 #include "task.h"
 #include "ntc_temperature.h"
 /* Function prototypes -------------------------------------------------------*/
-// Check if temperature exceeds maximum safe limit
-int Temp_Level_Check(float temp1, float temp2);
+// Evaluate NTC temperature level
+int NTC_Temp_Level_Check(float tempN);
+// Evaluate system temperature level
+int SYS_Temp_Level_Check(float temps[], int num_sensors);
 // Limit output based on temperature state
 void Output_Temp_Limit(int state);
 // Allow other files to get the temperature_limit_factor

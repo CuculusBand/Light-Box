@@ -73,7 +73,7 @@ int SYS_Temp_Level_Check(float temps[], int num_sensors)
     return (num_error_sensors > 0) ? -1 : max_temp_stete;
 }
 
-// Action of different temperature states
+// Limit output based on temperature state
 void Output_Temp_Limit(int state)
 {
     switch(state){

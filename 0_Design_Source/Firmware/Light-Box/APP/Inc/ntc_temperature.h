@@ -26,8 +26,8 @@ typedef struct {
     uint32_t  adc_channel;              // ADC channel
     float     adc_resolution;           // ADC resolution
     uint16_t  adc_DMAindex;             // ADC DMA index
-    float     vref;                     // reference voltage (V)
-    float     r_ref;                    // divider resistor (Ω)
+    float     vref;                     // Reference voltage (V)
+    float     r_ref;                    // Divider resistor (Ω)
     float     r_ntc_25c;                // NTC resistor(@25°C) (Ω)
     float     b_value;                  // B
 } NTC_Measurement_Config_t;

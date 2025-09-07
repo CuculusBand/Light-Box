@@ -17,8 +17,7 @@ extern "C" {
 #include <stdlib.h>
 
 /* Private function prototypes -----------------------------------------------*/
-
-/* Convert float to ascii string with specified decimal places */
+// Convert float to ascii string with specified decimal places
 void float2ascii(char *buf, float num, int decimals);
 
 #ifdef __cplusplus
