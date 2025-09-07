@@ -39,6 +39,7 @@
 #include "pwm_app.h"
 #include "mixedlight_switch.h"
 #include "ntc_temperature.h"
+#include "shortcut.h"
 // task file
 #include "Temperature_Task.h"
 /* USER CODE END Includes */
@@ -65,6 +66,8 @@ char msg_task_init1[128];
 char msg_task_init2[128];
 char msg_task_init3[128];
 extern uint16_t adc_buffer[3];
+static ShortcutHandle_t shortcut_handle;    // shortcut handler state
+static EncoderMode_t last_mode = MODE_Temperature;
 /* USER CODE END Variables */
 osThreadId MainTaskHandle;
 osThreadId AdjustLightHandle;
@@ -73,7 +76,11 @@ osThreadId ShortcutHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+// Callback function of Encoder
+static void Encoder_AppCallback(float new_brightness, float new_cct_level)
+{
+    PWM_App_Update(new_brightness, new_cct_level);
+}
 /* USER CODE END FunctionPrototypes */
 
 void StartMainTask(void const * argument);
@@ -142,19 +149,20 @@ void MX_FREERTOS_Init(void) {
 void StartMainTask(void const * argument)
 {
   /* USER CODE BEGIN StartMainTask */
-  sprintf(msg_task_init0, "main task...\r\n");
-  Encoder_Init(&htim2); // Initialize encoder interface
-  osDelay(10);
-  PWM_App_Init();       // Initialize PWM application
-  osDelay(200);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
-  osDelay(50);
+  osDelay(20);
+  // Create a timer for non-blocking beep
+  Beep_NonBlocking_Init();
+  // Config temperature channels
   Temperature_Channel_Config(NULL);
+  // Initialization finish
+  sprintf(msg_task_init0, "main task...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
+  osDelay(20);
   /* Infinite loop */
   for(;;)
   {
     Temperature_Task(NULL);
-    osDelay(2000);
+    osDelay(1500);
   }
   /* USER CODE END StartMainTask */
 }
@@ -169,12 +177,23 @@ void StartMainTask(void const * argument)
 void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
-  osDelay(10);
+  // Register Encoder callback
+  Encoder_RegisterCallback(Encoder_AppCallback);
+  // Create a queue to transfer the encoder's mode
+  MixedlightSwitch_init();
+  // Initialize encoder
+  Encoder_Init(&htim2);
+  // Initialize PWM application
+  PWM_App_Init();
+  // Initialization finish
   sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 200);
+  osDelay(5);
   /* Infinite loop */
   for(;;)
   {
+    // Process encoder action
+    Encoder_Update(&htim2);
     osDelay(100);
   }
   /* USER CODE END Run_AdjustLightOutput */
@@ -190,13 +209,24 @@ void Run_AdjustLightOutput(void const * argument)
 void Run_AdjustTargetChange(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustTargetChange */
-  osDelay(40);
+  // Get the latest mode
+  last_mode = MixedlightSwitch_GetCurrentMode();
+  // Initialization finish
   sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 200);
+  osDelay(5);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    MixedlightSwitch_UpdateCurrentMode();
+    EncoderMode_t current = MixedlightSwitch_GetCurrentMode();
+    // Beep if the encoder's mode changed
+    if (current != last_mode) {
+      // Update the latest mode
+      last_mode = current;
+      Beep_NonBlocking(10);
+    }
+    osDelay(10);
   }
   /* USER CODE END Run_AdjustTargetChange */
 }
@@ -211,9 +241,11 @@ void Run_AdjustTargetChange(void const * argument)
 void Run_Shortcut(void const * argument)
 {
   /* USER CODE BEGIN Run_Shortcut */
-  osDelay(70);
+  Shortcut_Init(&shortcut_handle);
+  // Initialization finish
   sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
+  osDelay(5);
   /* Infinite loop */
   for(;;)
   {
