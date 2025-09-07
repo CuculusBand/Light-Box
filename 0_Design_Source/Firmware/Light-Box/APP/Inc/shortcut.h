@@ -17,23 +17,23 @@ extern "C" {
 
 /* Shortcut action types */
 typedef enum {
-    SHORTCUT_NONE = 0,        // no action
-    SHORTCUT_QUICK_OFF,       // immediate off
-    SHORTCUT_RESTORE_STATE    // restore saved state
+    SHORTCUT_NONE = 0,        // No action
+    SHORTCUT_QUICK_OFF,       // Immediate off
+    SHORTCUT_RESTORE_STATE    // Restore saved state
 } ShortcutAction_t;
 
 /* Light state structure storing brightness and color temperature for shortcut functionality */
 typedef struct {
-    float brightness;  // saved brightness (0.0-1.0)
-    float cct_level;   // saved cct level (0.0-1.0)
-    uint8_t is_valid;        // whether a state is saved (1) or not (0)
+    float brightness;   // Saved brightness (0.0-1.0)
+    float cct_level;    // Saved cct level (0.0-1.0)
+    uint8_t is_valid;   // Whether a state is saved (1) or not (0)
 } LightState_t;
 
 /* Shortcut button handling structure */
 typedef struct {
-    uint32_t last_press_time; // last press timestamp
-    uint8_t click_count;      // number of clicks detected
-    LightState_t saved_state; // saved light state
+    uint32_t last_press_time; // Last press timestamp
+    uint8_t click_count;      // Number of clicks detected
+    LightState_t saved_state; // Saved light state
 } ShortcutHandle_t;
 
 /* Initialize the shortcut button handling */

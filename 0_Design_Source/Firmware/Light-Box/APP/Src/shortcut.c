@@ -39,22 +39,22 @@ void Shortcut_Init(ShortcutHandle_t *handle)
     */
 ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)
 {
-    // null check
+    // Null check
     if (handle == NULL) return SHORTCUT_NONE;
     
     uint32_t current_time = HAL_GetTick(); // when presseed, get current time
     uint32_t time_since_last_press = current_time - handle->last_press_time;
     
-    // update last press time
+    // Update last press time
     handle->last_press_time = current_time;
     
-    // judge single or double click
+    // Judge single or double click
     if (time_since_last_press < DOUBLE_CLICK_THRESHOLD_MS) {
         // double click - restore state
         handle->click_count = 2;
         return SHORTCUT_RESTORE_STATE;
     } else {
-        // single click - cut off immediately
+        // Single click - cut off immediately
         handle->click_count = 1;
         return SHORTCUT_QUICK_OFF;
     }
@@ -70,7 +70,7 @@ ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)
     */
 void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float cct_level)
 {
-    // null check
+    // Null check
     if (handle == NULL) return;
     
     handle->saved_state.brightness = brightness;
@@ -87,13 +87,13 @@ void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float
     */
 LightState_t Shortcut_GetSavedState(ShortcutHandle_t *handle)
 {
-    // create an invalid state to return if handle is null
+    // Create an invalid state to return if handle is null
     LightState_t invalid_state = {0, 0, 0};
     invalid_state.is_valid = 0;
 
-    // null check
+    // Null check
     if (handle == NULL) return invalid_state;
     
-    // return saved state
+    // Return saved state
     return handle->saved_state;
 }
