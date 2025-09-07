@@ -1,6 +1,6 @@
 # Design_Notes/Firmware_Requirements
 
-## 2025-08-15: Initial Requirements (v0.1)
+## Initial Requirements (v0.1)
 ### Beep
   - Beep to inform the user of the action of the equipment
 
@@ -19,15 +19,31 @@
 
   > Cool = CCT * Brightness       ->  Cool * ARR
 
+  > CCT (0.0~1.0)
+
 ### NTC
   - **Measure the temperature of the boards**
+
+### Shortcut
+  - **Quickly stop output or restore the previous output status**
 
 ---
 # Design_Notes/Firmware_tasks
 - mainTask
+  
+  System initialization, temperature monitoring, status update... 
+
 - AdjustLight
+  
+  Change brightness and color temperature.
+
 - AdjustTarget
-- OutputMode
+  
+  Change the parameters adjusted by the encoder.
+
+- Shortcut
+  
+  Quik shutoff or running.
 
 ---
 # Design_Notes/Firmware_funtion
