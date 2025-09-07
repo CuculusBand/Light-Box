@@ -66,20 +66,20 @@ char msg_task_init2[128];
 char msg_task_init3[128];
 extern uint16_t adc_buffer[3];
 /* USER CODE END Variables */
-osThreadId mainTaskHandle;
+osThreadId MainTaskHandle;
 osThreadId AdjustLightHandle;
 osThreadId AdjustTargetHandle;
-osThreadId OutputModeHandle;
+osThreadId ShortcutHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void const * argument);
+void StartMainTask(void const * argument);
 void Run_AdjustLightOutput(void const * argument);
 void Run_AdjustTargetChange(void const * argument);
-void Run_OutputModeChange(void const * argument);
+void Run_Shortcut(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -110,9 +110,9 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of mainTask */
-  osThreadDef(mainTask, StartDefaultTask, osPriorityNormal, 0, 256);
-  mainTaskHandle = osThreadCreate(osThread(mainTask), NULL);
+  /* definition and creation of MainTask */
+  osThreadDef(MainTask, StartMainTask, osPriorityHigh, 0, 256);
+  MainTaskHandle = osThreadCreate(osThread(MainTask), NULL);
 
   /* definition and creation of AdjustLight */
   osThreadDef(AdjustLight, Run_AdjustLightOutput, osPriorityAboveNormal, 0, 128);
@@ -122,9 +122,9 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(AdjustTarget, Run_AdjustTargetChange, osPriorityBelowNormal, 0, 128);
   AdjustTargetHandle = osThreadCreate(osThread(AdjustTarget), NULL);
 
-  /* definition and creation of OutputMode */
-  osThreadDef(OutputMode, Run_OutputModeChange, osPriorityAboveNormal, 0, 256);
-  OutputModeHandle = osThreadCreate(osThread(OutputMode), NULL);
+  /* definition and creation of Shortcut */
+  osThreadDef(Shortcut, Run_Shortcut, osPriorityAboveNormal, 0, 128);
+  ShortcutHandle = osThreadCreate(osThread(Shortcut), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -132,16 +132,16 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartMainTask */
 /**
-  * @brief  Function implementing the mainTask thread.
+  * @brief  Function implementing the MainTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+/* USER CODE END Header_StartMainTask */
+void StartMainTask(void const * argument)
 {
-  /* USER CODE BEGIN StartDefaultTask */
+  /* USER CODE BEGIN StartMainTask */
   sprintf(msg_task_init0, "main task...\r\n");
   Encoder_Init(&htim2); // Initialize encoder interface
   osDelay(10);
@@ -151,13 +151,12 @@ void StartDefaultTask(void const * argument)
   osDelay(50);
   Temperature_Channel_Config(NULL);
   /* Infinite loop */
-  //Temperature_Task(NULL);
   for(;;)
   {
     Temperature_Task(NULL);
     osDelay(2000);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartMainTask */
 }
 
 /* USER CODE BEGIN Header_Run_AdjustLightOutput */
@@ -202,34 +201,25 @@ void Run_AdjustTargetChange(void const * argument)
   /* USER CODE END Run_AdjustTargetChange */
 }
 
-/* USER CODE BEGIN Header_Run_OutputModeChange */
+/* USER CODE BEGIN Header_Run_Shortcut */
 /**
-* @brief Function implementing the OutputMode thread.
+* @brief Function implementing the Shortcut thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_Run_OutputModeChange */
-void Run_OutputModeChange(void const * argument)
+/* USER CODE END Header_Run_Shortcut */
+void Run_Shortcut(void const * argument)
 {
-  /* USER CODE BEGIN Run_OutputModeChange */
+  /* USER CODE BEGIN Run_Shortcut */
   osDelay(70);
-  sprintf(msg_task_init3, "OutputModeChange...\r\n");
+  sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
-  char VBUS_voltage_buf[8];
-  int VBUS;
   /* Infinite loop */
   for(;;)
   {
-    VBUS = adc_buffer[0];
-    osDelay(20);
-    float VBUS_voltage = 3.3/4096*VBUS*6.1;
-    float2ascii(VBUS_voltage_buf, VBUS_voltage, 3);
-    osDelay(20);
-    sprintf(msg_task_init3, "VBUS: %s V (%d)\r\n",VBUS_voltage_buf, VBUS);
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
-    osDelay(1000);
+    osDelay(1);
   }
-  /* USER CODE END Run_OutputModeChange */
+  /* USER CODE END Run_Shortcut */
 }
 
 /* Private application code --------------------------------------------------*/
