@@ -46,7 +46,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define current_chip_series "STM32G0xx" 
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -128,19 +128,21 @@ int main(void)
   Get_Chip_UID(UID_ADDR);
   sprintf(msg_UID, "UID: %08lX-%08lX-%08lX\r\n", uid[0], uid[1], uid[2]);
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  UID_To_Base32(uid, UID_ENDIAN_LITTLE);
-  sprintf(msg_UID, "UID base32-L: %s\r\n", UID_Base32);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  UID_To_Base32(uid, UID_ENDIAN_BIG);
-  sprintf(msg_UID, "UID base32-B: %s\r\n", UID_Base32);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  UID_To_Base64URL(uid, UID_ENDIAN_LITTLE);
-  sprintf(msg_UID, "UID base64-L: %s\r\n", UID_Base64URL);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  UID_To_Base64URL(uid, UID_ENDIAN_BIG);
-  sprintf(msg_UID, "UID base64-B: %s\r\n", UID_Base64URL);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  Beep_Blocking(200);
+  if(factory == 1){ // Convert UID and send it to PC only in factory test mode
+    UID_To_Base32(uid, UID_ENDIAN_LITTLE);
+    sprintf(msg_UID, "UID base32-L: %s\r\n", UID_Base32);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base32(uid, UID_ENDIAN_BIG);
+    sprintf(msg_UID, "UID base32-B: %s\r\n", UID_Base32);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base64URL(uid, UID_ENDIAN_LITTLE);
+    sprintf(msg_UID, "UID base64-L: %s\r\n", UID_Base64URL);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base64URL(uid, UID_ENDIAN_BIG);
+    sprintf(msg_UID, "UID base64-B: %s\r\n", UID_Base64URL);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    Beep_Blocking(200);
+  }
   HAL_Delay(50);
   /* USER CODE END 2 */
 

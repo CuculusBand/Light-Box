@@ -99,7 +99,8 @@ void Error_Handler(void);
 #define Panel_Type_Detec_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define current_chip_series "STM32G0xx" // Current chip series
+#define factory 1  // 1: factory test mode; 0: normal mode
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

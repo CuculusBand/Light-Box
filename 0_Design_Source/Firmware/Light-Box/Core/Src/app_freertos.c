@@ -149,18 +149,19 @@ void MX_FREERTOS_Init(void) {
 void StartMainTask(void const * argument)
 {
   /* USER CODE BEGIN StartMainTask */
-  osDelay(20);
   // Create a timer for non-blocking beep
   Beep_NonBlocking_Init();
   // Config temperature channels
   Temperature_Channel_Config(NULL);
   // Initialization finish
+  osDelay(100);
   sprintf(msg_task_init0, "main task...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   osDelay(20);
   /* Infinite loop */
   for(;;)
   {
+    osDelay(500);
     Temperature_Task(NULL);
     osDelay(1500);
   }
@@ -177,6 +178,7 @@ void StartMainTask(void const * argument)
 void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
+  osDelay(5);
   // Register Encoder callback
   Encoder_RegisterCallback(Encoder_AppCallback);
   // Create a queue to transfer the encoder's mode
@@ -187,7 +189,7 @@ void Run_AdjustLightOutput(void const * argument)
   PWM_App_Init();
   // Initialization finish
   sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 200);
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 500);
   osDelay(5);
   /* Infinite loop */
   for(;;)
@@ -209,11 +211,12 @@ void Run_AdjustLightOutput(void const * argument)
 void Run_AdjustTargetChange(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustTargetChange */
+  osDelay(10);
   // Get the latest mode
   last_mode = MixedlightSwitch_GetCurrentMode();
   // Initialization finish
   sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 200);
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 500);
   osDelay(5);
   /* Infinite loop */
   for(;;)
@@ -244,12 +247,12 @@ void Run_Shortcut(void const * argument)
   Shortcut_Init(&shortcut_handle);
   // Initialization finish
   sprintf(msg_task_init3, "Shortcut...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 200);
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
   osDelay(5);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END Run_Shortcut */
 }
