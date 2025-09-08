@@ -29,6 +29,17 @@ void PWM_App_Init(void)
     HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
 }
 
+// PWM_App Stop
+/**
+ * @brief   Stop PWM for light control
+ * @note    This function stops the PWM channels for brightness and color temperature control.
+ */
+void PWM_App_Stop(void)
+{
+    HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
+}
+
 // Update PWM duty cycle
 /**
     * @brief    Update PWM duty cycles for brightness and color temperature
