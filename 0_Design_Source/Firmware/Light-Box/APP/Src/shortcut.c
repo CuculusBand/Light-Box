@@ -11,7 +11,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 // Double click detection threshold in milliseconds
-#define DOUBLE_CLICK_THRESHOLD_MS 300
+#define DOUBLE_CLICK_THRESHOLD_MS 2000
 
 // Initialize the shortcut button handling
 /** 

@@ -153,7 +153,7 @@ void StartMainTask(void const * argument)
   Beep_NonBlocking_Init();
   // Config temperature channels
   Temperature_Channel_Config(NULL);
-  // Initialization finish
+  // Initialization finished
   osDelay(100);
   sprintf(msg_task_init0, "main task...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
@@ -187,7 +187,7 @@ void Run_AdjustLightOutput(void const * argument)
   Encoder_Init(&htim2);
   // Initialize PWM application
   PWM_App_Init();
-  // Initialization finish
+  // Initialization finished
   sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 500);
   osDelay(5);
@@ -214,7 +214,7 @@ void Run_AdjustTargetChange(void const * argument)
   osDelay(10);
   // Get the latest mode
   last_mode = MixedlightSwitch_GetCurrentMode();
-  // Initialization finish
+  // Initialization finished
   sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 500);
   osDelay(5);
@@ -245,14 +245,76 @@ void Run_Shortcut(void const * argument)
 {
   /* USER CODE BEGIN Run_Shortcut */
   Shortcut_Init(&shortcut_handle);
-  // Initialization finish
+  // Initialization finished
   sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
   osDelay(5);
+  // Read the initial state of the mode change switch
+  GPIO_PinState last_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    // Detect key's status
+    GPIO_PinState current_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
+    // The key is pressed
+    if (current_pin == GPIO_PIN_RESET && last_pin != GPIO_PIN_RESET) {
+      osDelay(30); // Debounce
+      // Check if the key is still pressed
+      if (HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin) == GPIO_PIN_RESET) {
+        // Wait for release
+        while (HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin) == GPIO_PIN_RESET) {
+          osDelay(5); // Debounce
+        }
+      // After release, process the action
+      ShortcutAction_t action = Shortcut_ProcessPress(&shortcut_handle);
+      if (action == SHORTCUT_QUICK_OFF) {
+        // Get and save the current state
+        float cur_b = Encoder_GetBrightness();
+        float cur_c = Encoder_GetCCTLevel();
+        Shortcut_SaveCurrentState(&shortcut_handle, cur_b, cur_c);
+        // Update PWM and turn off to avoid encoder jitter
+        PWM_App_Update(0.0f, cur_c); // keep cct value but brightness 0
+        PWM_App_Stop();
+        Beep_Blocking(20);
+        if(factory == 1) {
+          osDelay(5);
+          sprintf(msg_task_init3, "QUICK_OFF\r\n");
+          HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+        }
+      } else if (action == SHORTCUT_RESTORE_STATE) {
+        // Get the saved state
+        LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
+        // Restore the saved state and check if valid at first
+        if (state_to_restore.is_valid) {
+          // Update PWM
+          PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+          // Start PWM output
+          PWM_App_Init();
+          Beep_Blocking(20);
+          if(factory == 1) {
+            osDelay(5);
+            sprintf(msg_task_init3, "RESTORE_STATE\r\n");
+            HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+          }
+        } else {  // Error beep if no valid state
+          Beep_Blocking(50);
+          osDelay(25);
+          Beep_Blocking(12);
+
+          if(factory == 1) {
+            osDelay(5);
+            sprintf(msg_task_init3, "RESTORE_STATE\r\n");
+            HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+          }
+        }
+      } else {
+        // No action for SHORTCUT_NONE
+      }
+    }
+      current_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
+    }
+    last_pin = current_pin;
+    osDelay(20);
   }
   /* USER CODE END Run_Shortcut */
 }
