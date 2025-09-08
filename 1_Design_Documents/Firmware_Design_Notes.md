@@ -101,6 +101,14 @@
   `EncoderMode_t Encoder_GetMode(void) { return current_mode; `
 
 ### PWM
+  - **PWM_App initialization**
+
+  `void PWM_App_Init(void)`
+
+  - **PWM_App Stop**
+
+  `void PWM_App_Stop(void)`
+
   - **Update PWM duty cycle**
   
   `void PWM_App_Update(float brightness, float cct_level)`
