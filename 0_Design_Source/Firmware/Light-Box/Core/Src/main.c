@@ -128,7 +128,7 @@ int main(void)
   Get_Chip_UID(UID_ADDR);
   sprintf(msg_UID, "UID: %08lX-%08lX-%08lX\r\n", uid[0], uid[1], uid[2]);
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  if(factory == 1){ // Convert UID and send it to PC only in factory test mode
+  if(factory == 1) { // Convert UID and send it to PC only in factory test mode
     UID_To_Base32(uid, UID_ENDIAN_LITTLE);
     sprintf(msg_UID, "UID base32-L: %s\r\n", UID_Base32);
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
