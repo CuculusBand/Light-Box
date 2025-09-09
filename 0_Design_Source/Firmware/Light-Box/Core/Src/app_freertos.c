@@ -278,7 +278,7 @@ void Run_Shortcut(void const * argument)
         Beep_Blocking(20);
         if(factory == 1) {
           osDelay(5);
-          sprintf(msg_task_init3, "QUICK_OFF\r\n");
+          sprintf(msg_task_init3, "QUICK_OFF (b_%d c_%d)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.brightness);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
         }
       } else if (action == SHORTCUT_RESTORE_STATE) {
@@ -293,7 +293,7 @@ void Run_Shortcut(void const * argument)
           Beep_Blocking(20);
           if(factory == 1) {
             osDelay(5);
-            sprintf(msg_task_init3, "RESTORE_STATE\r\n");
+            sprintf(msg_task_init3, "RESTORE_STATE (b_%d c_%d)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.brightness);
             HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
           }
         } else {  // Error beep if no valid state
