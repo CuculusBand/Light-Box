@@ -31,15 +31,16 @@ typedef struct {
 
 /* Shortcut button handling structure */
 typedef struct {
-    uint32_t last_press_time; // Last press timestamp
-    uint8_t click_count;      // Number of clicks detected
-    LightState_t saved_state; // Saved light state
+    uint32_t last_press_time;   // Last press timestamp
+    uint8_t click_count;        // Number of clicks detected
+    uint8_t waiting_for_click;   // Whether waiting for the next click (1) or not (0)
+    LightState_t saved_state;   // Saved light state
 } ShortcutHandle_t;
 
 /* Initialize the shortcut button handling */
 void Shortcut_Init(ShortcutHandle_t *handle);
 /* Process button press and return the detected action */
-ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle);
+ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin);
 /* Save the current light state */
 void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float cct_level);
 /* Retrieve the saved light state */

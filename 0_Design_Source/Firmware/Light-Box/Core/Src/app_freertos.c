@@ -249,25 +249,18 @@ void Run_Shortcut(void const * argument)
   sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
   osDelay(5);
-  // Read the initial state of the mode change switch
-  GPIO_PinState last_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
+  // ASICC buffer for sending light status in factory mode
+  char info_brightness_buf[8], info_cct_level_buf[8];
   /* Infinite loop */
   for(;;)
   {
-    // Detect key's status
-    GPIO_PinState current_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
-    // The key is pressed
-    if (current_pin == GPIO_PIN_RESET && last_pin != GPIO_PIN_RESET) {
-      osDelay(30); // Debounce
-      // Check if the key is still pressed
-      if (HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin) == GPIO_PIN_RESET) {
-        // Wait for release
-        while (HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin) == GPIO_PIN_RESET) {
-          osDelay(5); // Debounce
-        }
-      // After release, process the action
-      ShortcutAction_t action = Shortcut_ProcessPress(&shortcut_handle);
-      if (action == SHORTCUT_QUICK_OFF) {
+    ShortcutAction_t action = Shortcut_ProcessPress(
+      &shortcut_handle, 
+      Mode_Change_SW_GPIO_Port, 
+      Mode_Change_SW_Pin);
+    switch (action) {
+      case SHORTCUT_QUICK_OFF:
+      {
         // Get and save the current state
         float cur_b = Encoder_GetBrightness();
         float cur_c = Encoder_GetCCTLevel();
@@ -278,42 +271,38 @@ void Run_Shortcut(void const * argument)
         Beep_Blocking(20);
         if(factory == 1) {
           osDelay(5);
-          sprintf(msg_task_init3, "QUICK_OFF (b_%d c_%d)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.brightness);
+          // Convert to string
+          float2ascii(info_brightness_buf, shortcut_handle.saved_state.brightness, 2);
+          float2ascii(info_cct_level_buf, shortcut_handle.saved_state.cct_level, 2);
+          sprintf(msg_task_init3, "QUICK_OFF (b_%s c_%s)\r\n", info_brightness_buf, info_cct_level_buf);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
         }
-      } else if (action == SHORTCUT_RESTORE_STATE) {
-        // Get the saved state
-        LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
-        // Restore the saved state and check if valid at first
-        if (state_to_restore.is_valid) {
-          // Update PWM
-          PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
-          // Start PWM output
-          PWM_App_Init();
-          Beep_Blocking(20);
-          if(factory == 1) {
-            osDelay(5);
-            sprintf(msg_task_init3, "RESTORE_STATE (b_%d c_%d)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.brightness);
-            HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
-          }
-        } else {  // Error beep if no valid state
-          Beep_Blocking(50);
-          osDelay(25);
-          Beep_Blocking(12);
-
-          if(factory == 1) {
-            osDelay(5);
-            sprintf(msg_task_init3, "RESTORE_STATE\r\n");
-            HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
-          }
-        }
-      } else {
-        // No action for SHORTCUT_NONE
+        break;
       }
-    }
-      current_pin = HAL_GPIO_ReadPin(Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
-    }
-    last_pin = current_pin;
+      case SHORTCUT_RESTORE_STATE:
+        {
+          // Get the saved state
+          LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
+          // Restore the saved state if valid
+          if (state_to_restore.is_valid) {
+            // Update PWM
+            PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+            // Start PWM output
+            PWM_App_Init();
+            Beep_Blocking(20);
+            if(factory == 1) {
+              osDelay(5);
+              float2ascii(info_brightness_buf, shortcut_handle.saved_state.brightness, 2);
+              float2ascii(info_cct_level_buf, shortcut_handle.saved_state.cct_level, 2);
+              sprintf(msg_task_init3, "RESTORE_STATE (b_%s c_%s)\r\n", info_brightness_buf, info_cct_level_buf);
+              HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+            }
+          }
+          break;
+        }
+      default:
+        break; 
+      }
     osDelay(20);
   }
   /* USER CODE END Run_Shortcut */
