@@ -22,16 +22,17 @@
     * @param    handle: Pointer to the ShortcutHandle_t structure to initialize
     * @note     This function should be called during system initialization to set up the shortcut handling.
     */
-void Shortcut_Init(ShortcutHandle_t *handle)
+void Shortcut_Init(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin)
 {
     if (handle == NULL) return;
     
     handle->last_press_time = 0;
     handle->click_count = 0;
-    handle->waiting_for_click = 1;
+    handle->waiting_for_click = 0;
     handle->saved_state.is_valid = 0;
     handle->saved_state.brightness = 0.0f;
-    handle->saved_state.cct_level = 0.5f;
+    handle->saved_state.cct_level = 0.0f;
+    handle->last_pin_state = HAL_GPIO_ReadPin(port, pin);
 }
 
 // Process button press and return the detected action
@@ -47,58 +48,58 @@ ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *p
 {
     // Null check
     if (!handle) return SHORTCUT_NONE;
-    // Set default state - Key released
-    static GPIO_PinState last_pin_state = GPIO_PIN_SET; // High level if released
+    // Get state from GPIO
+    GPIO_PinState pin_state = HAL_GPIO_ReadPin(port, pin);
     // Get current time
     uint32_t current_time = HAL_GetTick();
-    // Read current pin state
-    GPIO_PinState pin_state = HAL_GPIO_ReadPin(port, pin);
-    // Key is pressed while released before, judge single or double click
-    if (pin_state == GPIO_PIN_RESET && last_pin_state == GPIO_PIN_SET) {
-        osDelay(30); // Debounce
-        // Check if the key is still pressed
-        while (HAL_GPIO_ReadPin(port, pin) == GPIO_PIN_RESET) {
-            osDelay(5);
+    // Debounce handling: if state changed, wait for it to stabilize
+    if (pin_state != handle->last_pin_state) {
+        static uint32_t debounce_start = 0;
+        // State changed, start debounce timer
+        if (debounce_start == 0) {
+            debounce_start = current_time;
         }
-        // Key released, press detected
-        // If this is the first click, update state and wait for another click
-        if (handle->waiting_for_click) {
-            current_time = HAL_GetTick();           // Get current time
-            handle->last_press_time = current_time; // Update last press time
-            handle->waiting_for_click = 0;          // First ckick detected, then just wait for the second click
-            handle->click_count = 1;                // First click
-            last_pin_state = pin_state;             // Update latest pin state
-            return SHORTCUT_NONE;                   // No action yet
-        // The second click detected, check time interval now
-        } else {
-            // Update current time
-            current_time = HAL_GetTick();
-            // Calculate time between two clicks
+        // If state changed for more than 30ms, consider it stable
+        if ((current_time - debounce_start) < 30) {
+            return SHORTCUT_NONE;
+        }
+    // After debounce, update last pin state and clear debounce timer
+    handle->last_pin_state = pin_state;
+    debounce_start = 0;
+    }
+    // Handle key press
+    if (pin_state == GPIO_PIN_RESET) {
+        // Check if the system is waiting for the second click
+        if (!handle->waiting_for_click) {
+            handle->last_press_time = current_time;
+            handle->waiting_for_click = 1;
+            handle->click_count = 1;    // The first click
+            return SHORTCUT_NONE;       // hold on for the second click
+        }
+        // If this is the second click system is waiting for, ignore further presses
+    // If the key is not pressed, no action needed
+    }
+    // If the key is released while waiting for the second click
+    if (pin_state == GPIO_PIN_SET && handle->waiting_for_click) {
+        // When click count is 1, the system have to judge whether this click is the second click
+        if (handle->click_count == 1) {
+            // Check if within double click threshold
             if (current_time - handle->last_press_time <= DOUBLE_CLICK_THRESHOLD_MS) {
-                handle->waiting_for_click = 1;      // 2 clicks detected and start waiting for next clicks
-                handle->click_count = 2;            // 2 clicks detected
-                last_pin_state = pin_state;         // Update latest pin state
-                return SHORTCUT_RESTORE_STATE;      // Double click action
+                handle->click_count = 2;    // 2 clicks detected
+                handle->waiting_for_click = 0;  // Stop waiting for clicks
+                return SHORTCUT_RESTORE_STATE;  // Double click action
             } else {
                 // Timeout for double click, return one click
-                handle->last_press_time = current_time;
-                handle->waiting_for_click = 1;      // Wait for double click agian
-                handle->click_count = 1;            // First click
-                last_pin_state = pin_state;         // Update latest pin state
-                return SHORTCUT_QUICK_OFF;          // Single click action
+                handle->waiting_for_click = 0;
+                return SHORTCUT_QUICK_OFF;
             }
         }
     }
-    // No more press detected, check for waiting timeout
+    // If timeout waiting for the second click
     if (handle->waiting_for_click && (current_time - handle->last_press_time > DOUBLE_CLICK_THRESHOLD_MS)) {
-        handle->waiting_for_click = 1;      // Wait for double click agian
-        handle->click_count = 1;            // First click
-        last_pin_state = pin_state;         // Update latest pin state
-        return SHORTCUT_QUICK_OFF;          // Single click action
+        handle->waiting_for_click = 0;
+        return SHORTCUT_QUICK_OFF;
     }
-    // Update last pin state
-    last_pin_state = pin_state;
-    // No action
     return SHORTCUT_NONE;
 }
 

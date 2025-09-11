@@ -244,7 +244,8 @@ void Run_AdjustTargetChange(void const * argument)
 void Run_Shortcut(void const * argument)
 {
   /* USER CODE BEGIN Run_Shortcut */
-  Shortcut_Init(&shortcut_handle);
+  osDelay(8);
+  Shortcut_Init(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
   // Initialization finished
   sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
@@ -254,10 +255,7 @@ void Run_Shortcut(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    ShortcutAction_t action = Shortcut_ProcessPress(
-      &shortcut_handle, 
-      Mode_Change_SW_GPIO_Port, 
-      Mode_Change_SW_Pin);
+    ShortcutAction_t action = Shortcut_ProcessPress(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
     switch (action) {
       case SHORTCUT_QUICK_OFF:
       {

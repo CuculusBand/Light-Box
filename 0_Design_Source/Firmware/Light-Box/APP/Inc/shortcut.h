@@ -17,9 +17,10 @@ extern "C" {
 
 /* Shortcut action types */
 typedef enum {
-    SHORTCUT_NONE = 0,        // No action
-    SHORTCUT_QUICK_OFF,       // Immediate off
-    SHORTCUT_RESTORE_STATE    // Restore saved state
+    SHORTCUT_NONE = 0,      // No action
+    SHORTCUT_QUICK_OFF,     // Immediate off
+    SHORTCUT_RESTORE_STATE, // Restore saved state
+    SHORTCUT_LONG_PRESS,    // Long press action
 } ShortcutAction_t;
 
 /* Light state structure storing brightness and color temperature for shortcut functionality */
@@ -31,14 +32,15 @@ typedef struct {
 
 /* Shortcut button handling structure */
 typedef struct {
-    uint32_t last_press_time;   // Last press timestamp
-    uint8_t click_count;        // Number of clicks detected
-    uint8_t waiting_for_click;   // Whether waiting for the next click (1) or not (0)
-    LightState_t saved_state;   // Saved light state
+    uint32_t last_press_time;       // Last press timestamp
+    uint8_t click_count;            // Number of clicks detected
+    uint8_t waiting_for_click;      // Whether waiting for the next click (1) or not (0)
+    GPIO_PinState last_pin_state;   // Last stable pin state
+    LightState_t saved_state;       // Saved light state
 } ShortcutHandle_t;
 
 /* Initialize the shortcut button handling */
-void Shortcut_Init(ShortcutHandle_t *handle);
+void Shortcut_Init(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin);
 /* Process button press and return the detected action */
 ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin);
 /* Save the current light state */
