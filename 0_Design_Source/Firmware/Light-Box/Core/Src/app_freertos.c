@@ -222,11 +222,11 @@ void Run_AdjustTargetChange(void const * argument)
   for(;;)
   {
     MixedlightSwitch_UpdateCurrentMode();
-    EncoderMode_t current = MixedlightSwitch_GetCurrentMode();
+    EncoderMode_t current_mode = MixedlightSwitch_GetCurrentMode();
     // Beep if the encoder's mode changed
-    if (current != last_mode) {
+    if (current_mode != last_mode) {
       // Update the latest mode
-      last_mode = current;
+      last_mode = current_mode;
       Beep_NonBlocking(10);
     }
     osDelay(20);
