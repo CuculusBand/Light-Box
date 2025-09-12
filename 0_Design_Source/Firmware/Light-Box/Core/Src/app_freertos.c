@@ -161,7 +161,7 @@ void StartMainTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(500);
+    osDelay(1000);
     Temperature_Task(NULL);
     osDelay(1500);
   }
@@ -229,7 +229,7 @@ void Run_AdjustTargetChange(void const * argument)
       last_mode = current;
       Beep_NonBlocking(10);
     }
-    osDelay(10);
+    osDelay(20);
   }
   /* USER CODE END Run_AdjustTargetChange */
 }
@@ -250,12 +250,12 @@ void Run_Shortcut(void const * argument)
   sprintf(msg_task_init3, "Shortcut...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
   osDelay(5);
-  // ASICC buffer for sending light status in factory mode
-  char info_brightness_buf[8], info_cct_level_buf[8];
   /* Infinite loop */
   for(;;)
   {
     ShortcutAction_t action = Shortcut_ProcessPress(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
+    // sprintf(msg_task_init3, "Shortcut_ProcessPress %d\r\n", action);
+    // HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
     switch (action) {
       case SHORTCUT_QUICK_OFF:
       {
@@ -266,13 +266,9 @@ void Run_Shortcut(void const * argument)
         // Update PWM and turn off to avoid encoder jitter
         PWM_App_Update(0.0f, cur_c); // keep cct value but brightness 0
         PWM_App_Stop();
-        Beep_Blocking(20);
+        Beep_Blocking(10);
         if(factory == 1) {
-          osDelay(5);
-          // Convert to string
-          float2ascii(info_brightness_buf, shortcut_handle.saved_state.brightness, 2);
-          float2ascii(info_cct_level_buf, shortcut_handle.saved_state.cct_level, 2);
-          sprintf(msg_task_init3, "QUICK_OFF (b_%s c_%s)\r\n", info_brightness_buf, info_cct_level_buf);
+          sprintf(msg_task_init3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
         }
         break;
@@ -289,10 +285,7 @@ void Run_Shortcut(void const * argument)
             PWM_App_Init();
             Beep_Blocking(20);
             if(factory == 1) {
-              osDelay(5);
-              float2ascii(info_brightness_buf, shortcut_handle.saved_state.brightness, 2);
-              float2ascii(info_cct_level_buf, shortcut_handle.saved_state.cct_level, 2);
-              sprintf(msg_task_init3, "RESTORE_STATE (b_%s c_%s)\r\n", info_brightness_buf, info_cct_level_buf);
+              sprintf(msg_task_init3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
               HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
             }
           }
@@ -301,7 +294,7 @@ void Run_Shortcut(void const * argument)
       default:
         break; 
       }
-    osDelay(20);
+    osDelay(10);
   }
   /* USER CODE END Run_Shortcut */
 }

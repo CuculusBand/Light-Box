@@ -121,17 +121,11 @@ void Temperature_Task(void *argument)
         // Read resistances from both NTC channels
         float resistance1 = NTC_GetResistance(&ntc1_config);
         float resistance2 = NTC_GetResistance(&ntc2_config);
-        // Convert resistances to strings for display
-        float2ascii(resistance1_buf, resistance1, 3);
-        float2ascii(resistance2_buf, resistance2, 3);
         // Delay for 2ms
         osDelay(2);
         // Read temperatures from both NTC channels
         temp_ntc1 = NTC_GetTemperature(&ntc1_config);
         temp_ntc2 = NTC_GetTemperature(&ntc2_config);
-        // Convert temperatures to strings for display
-        float2ascii(temperature1_buf, temp_ntc1, 2);
-        float2ascii(temperature2_buf, temp_ntc2, 2);
         // Delay for 2ms
         osDelay(2);
         // Update temperature state based on readings
@@ -143,7 +137,8 @@ void Temperature_Task(void *argument)
         osDelay(10);
         // Send temperature state to PC via UART (factory test mode)
         if(factory == 1) {
-            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%sΩ %s\r\n<2>%sΩ %s\r\n",temp_state, resistance1_buf, temperature1_buf, resistance2_buf, temperature2_buf);
+            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%fΩ %f\r\n<2>%fΩ %f\r\n", 
+                temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
         }
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
 }
