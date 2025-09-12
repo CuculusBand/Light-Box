@@ -137,7 +137,7 @@ void Temperature_Task(void *argument)
         osDelay(10);
         // Send temperature state to PC via UART (factory test mode)
         if(factory == 1) {
-            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%fΩ %f\r\n<2>%fΩ %f\r\n", 
+            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f\r\n<2>%0.3fΩ %0.2f\r\n", 
                 temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
         }
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
