@@ -61,10 +61,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-char msg_task_init0[128];
-char msg_task_init1[128];
-char msg_task_init2[128];
-char msg_task_init3[128];
+char msg_task_init[30];
+char msg_task_task0[64];
+char msg_task_task1[64];
+char msg_task_task2[64];
+char msg_task_task3[64];
 extern uint16_t adc_buffer[3];
 static ShortcutHandle_t shortcut_handle;    // shortcut handler state
 static EncoderMode_t last_mode = MODE_Temperature;
@@ -76,10 +77,44 @@ osThreadId ShortcutHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-// Callback function of Encoder
+// Callback for updating PWM output based on encoder changes
 static void Encoder_AppCallback(float new_brightness, float new_cct_level)
 {
     PWM_App_Update(new_brightness, new_cct_level);
+}
+// System initialization function
+void SYS_Init(void *argument)
+{
+  // Register Encoder callback
+  Encoder_RegisterCallback(Encoder_AppCallback);
+  // Initialize encoder
+  Encoder_Init(&htim2);
+  // Initialize PWM application
+  PWM_App_Init();
+  // Initialization finished
+  sprintf(msg_task_init, "AdjustLightOutput...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
+  // Delay 10ms
+  HAL_Delay(10);
+  // Initialization finished
+  sprintf(msg_task_init, "AdjustTargetChange...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
+  // Delay 10ms
+  HAL_Delay(10);
+  // Initialize shortcut button handling
+  Shortcut_Init(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
+  // Initialization finished
+  sprintf(msg_task_init, "Shortcut...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
+  // Delay 10ms
+  HAL_Delay(5);
+  // Create a timer for non-blocking beep
+  Beep_NonBlocking_Init();
+  // Config temperature channels
+  Temperature_Channel_Config(NULL);
+  // Initialization finished
+  sprintf(msg_task_init, "main task...\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 100);
 }
 /* USER CODE END FunctionPrototypes */
 
@@ -97,7 +132,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  SYS_Init(NULL);
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -149,14 +184,6 @@ void MX_FREERTOS_Init(void) {
 void StartMainTask(void const * argument)
 {
   /* USER CODE BEGIN StartMainTask */
-  // Create a timer for non-blocking beep
-  Beep_NonBlocking_Init();
-  // Config temperature channels
-  Temperature_Channel_Config(NULL);
-  // Initialization finished
-  osDelay(100);
-  sprintf(msg_task_init0, "main task...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init0, strlen(msg_task_init0), 100);
   osDelay(20);
   /* Infinite loop */
   for(;;)
@@ -179,18 +206,8 @@ void Run_AdjustLightOutput(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustLightOutput */
   osDelay(5);
-  // Register Encoder callback
-  Encoder_RegisterCallback(Encoder_AppCallback);
   // Create a queue to transfer the encoder's mode
   MixedlightSwitch_init();
-  // Initialize encoder
-  Encoder_Init(&htim2);
-  // Initialize PWM application
-  PWM_App_Init();
-  // Initialization finished
-  sprintf(msg_task_init1, "AdjustLightOutput...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init1, strlen(msg_task_init1), 500);
-  osDelay(5);
   /* Infinite loop */
   for(;;)
   {
@@ -211,13 +228,9 @@ void Run_AdjustLightOutput(void const * argument)
 void Run_AdjustTargetChange(void const * argument)
 {
   /* USER CODE BEGIN Run_AdjustTargetChange */
-  osDelay(10);
+  osDelay(5);
   // Get the latest mode
   last_mode = MixedlightSwitch_GetCurrentMode();
-  // Initialization finished
-  sprintf(msg_task_init2, "AdjustTargetChange...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init2, strlen(msg_task_init2), 500);
-  osDelay(5);
   /* Infinite loop */
   for(;;)
   {
@@ -244,18 +257,13 @@ void Run_AdjustTargetChange(void const * argument)
 void Run_Shortcut(void const * argument)
 {
   /* USER CODE BEGIN Run_Shortcut */
-  osDelay(8);
-  Shortcut_Init(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
-  // Initialization finished
-  sprintf(msg_task_init3, "Shortcut...\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
   osDelay(5);
   /* Infinite loop */
   for(;;)
   {
     ShortcutAction_t action = Shortcut_ProcessPress(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
-    // sprintf(msg_task_init3, "Shortcut_ProcessPress %d\r\n", action);
-    // HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+    // sprintf(msg_task_task3, "Shortcut_ProcessPress %d\r\n", action);
+    // HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
     switch (action) {
       case SHORTCUT_QUICK_OFF:
       {
@@ -268,8 +276,8 @@ void Run_Shortcut(void const * argument)
         PWM_App_Stop();
         Beep_Blocking(10);
         if(factory == 1) {
-          sprintf(msg_task_init3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
-          HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+          sprintf(msg_task_task3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
+          HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
         }
         break;
       }
@@ -285,8 +293,8 @@ void Run_Shortcut(void const * argument)
             PWM_App_Init();
             Beep_Blocking(20);
             if(factory == 1) {
-              sprintf(msg_task_init3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
-              HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init3, strlen(msg_task_init3), 500);
+              sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+              HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
             }
           }
           break;
