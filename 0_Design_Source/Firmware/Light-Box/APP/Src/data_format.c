@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 // Convert float to ascii string with specified decimal places
 /**
@@ -19,29 +20,35 @@
     */ 
 void float2ascii(char *buf, float num, int decimals)
 {
-    // deal with negative numbers
+    // Deal with negative numbers
     if (num < 0) {
         *buf++ = '-';   // add negative sign ahead of the string
         num = -num;     // make number positive
     }
-    // integer and fractional parts
-    int int_part = (int)num;                    // separate interger part from float
-    float frac_part = num - (float)int_part;    // get fractional part by subtraction
-    // print integer part
+    // Limit decimals to a maximum of 9 and a minimum of 0
+    if (decimals > 9) {
+        decimals = 9;
+    } else if (decimals < 0) {
+        decimals = 0;
+    }
+    // Rounding to the specified decimal places
+    float scale = powf(10.0f, decimals); 
+    int scaled = (int)(num * scale + 0.5f);
+    // Integer and fractional parts
+    int int_part = scaled / (int)scale;
+    int frac_part = scaled % (int)scale;
+    // Print integer part
     sprintf(buf, "%d", int_part);               // use sprintf to convert integer part to string
     while (*buf != '\0') buf++;                 // move to the end of the string to append fractional part
                                                 // '\0' is the string terminator
-    // print fractional part
+    // Print fractional part
     if (decimals > 0) {                         // if decimals > 0, print fractional part
-        *buf++ = '.';                           // add decimal point first
-        // handle fractional part
-        for (int i = 0; i < decimals; i++) {    // loop for number of decimal places
-            frac_part *= 10.0f;                 // shift left by one decimal place
-            int digit = (int)frac_part;         // get the integer part which is the next digit
-            *buf++ = '0' + digit;               // convert digit to character and store in buffer ('0'=ASCII 48, this step calculates the ASCII of the digit)
-                                                // write the digit into buf[x] and move to buf[x+1]
-            frac_part -= digit;                 // remove the integer part, keep the fractional part for next digit
+        // Handle fractional part
+        if (decimals > 0) {
+            // Add decimal point first
+            *buf++ = '.';
+            // Handle leading zeros in fractional part
+            sprintf(buf, "%0*d", decimals, frac_part);
         }
-        *buf = '\0';                            // null-terminate in buf[decimals+1]
     }
 }
