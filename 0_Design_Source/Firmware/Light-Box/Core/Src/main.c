@@ -117,10 +117,6 @@ int main(void)
   MX_TIM17_Init();
   MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(40);
-  HAL_Delay(50);
-  Beep_Blocking(120);
-  HAL_Delay(50);
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
   HAL_Delay(50);

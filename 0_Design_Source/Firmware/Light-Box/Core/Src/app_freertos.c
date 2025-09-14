@@ -182,6 +182,7 @@ void StartMainTask(void const * argument)
 {
   /* USER CODE BEGIN StartMainTask */
   osDelay(20);
+  Beep_Blocking(60);
   /* Infinite loop */
   for(;;)
   {
