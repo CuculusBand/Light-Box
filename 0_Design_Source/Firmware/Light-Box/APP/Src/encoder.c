@@ -10,6 +10,10 @@
 #include "tim.h"
 #include "stm32g0xx_hal.h"
 #include "stm32g0xx_hal_tim.h"
+#include "math.h"
+#include "usart.h"
+#include <stdio.h>
+#include <string.h>
 
 #include "mixedlight_switch.h"
 #include "encoder.h"
@@ -24,6 +28,8 @@ static float cct_level  = 0.5f; // 0.0 ~ 1.0
 static EncoderMode_t current_mode = MODE_Temperature;
 static int16_t last_cnt = 0;    // Last encoder count value
 static uint32_t last_tick = 0;  // Last update tick
+// UART for debug
+static char msg_encoder[64];
 
 /* * Callback function pointer for encoder updates
  * This will be called with the new brightness and color temperature values
@@ -81,8 +87,11 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         // set speed factor based on time interval
         float speed_factor = 1.0f;
         if (dt > 0) {
-            speed_factor = 50.0f / dt;                      // if dt decreases, speed_factor increases
-            if (speed_factor > 10.0f) speed_factor = 10.0f; // limit max speed factor
+            float FAST_THRESHOLD = 150.0f;  // threshold for fast rotation
+            float SCALE = 70.0f;            // scale for speed factor calculation
+            speed_factor = expf((float)(FAST_THRESHOLD - dt) / SCALE);
+            if (speed_factor < 1.0f) speed_factor = 1.0f;
+            if (speed_factor > 10.0f) speed_factor = 10.0f;
         }
         // ppdate step size based on speed factor
         // limit max step size
@@ -102,6 +111,12 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         }
         // notify application layer to update PWM output
         if (Encoder_UpdateCallback) {
+            // Debug info
+            if(factory == 1) {
+                sprintf(msg_encoder, "Require: Bri-%0.3f Cct-%0.3f\r\n step: %0.4f", brightness, cct_level, delta_step);
+                HAL_UART_Transmit(&huart1, (uint8_t*)msg_encoder, strlen(msg_encoder), 500);
+            }
+            // Execute callback
             Encoder_UpdateCallback(brightness, cct_level);
         }
     }
