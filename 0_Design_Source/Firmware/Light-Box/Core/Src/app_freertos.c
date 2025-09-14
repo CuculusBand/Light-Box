@@ -40,7 +40,6 @@
 #include "mixedlight_switch.h"
 #include "ntc_temperature.h"
 #include "shortcut.h"
-// task file
 #include "temperature_monitor.h"
 /* USER CODE END Includes */
 
@@ -61,14 +60,14 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-char msg_task_init[30];
+char msg_task_init[25];
 char msg_task_task0[64];
 char msg_task_task1[64];
 char msg_task_task2[64];
 char msg_task_task3[64];
 extern uint16_t adc_buffer[3];
-static ShortcutHandle_t shortcut_handle;    // shortcut handler state
-static EncoderMode_t last_mode = MODE_Temperature;
+static ShortcutHandle_t shortcut_handle;            // shortcut handler state
+static EncoderMode_t last_mode = MODE_Temperature;  // last encoder mode
 /* USER CODE END Variables */
 osThreadId MainTaskHandle;
 osThreadId AdjustLightHandle;
@@ -92,19 +91,19 @@ void SYS_Init(void *argument)
   // Initialize PWM application
   PWM_App_Init();
   // Initialization finished
-  sprintf(msg_task_init, "AdjustLightOutput...\r\n");
+  sprintf(msg_task_init, "AdjustLightOutput\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
   // Delay 10ms
   HAL_Delay(5);
   // Initialization finished
-  sprintf(msg_task_init, "AdjustTargetChange...\r\n");
+  sprintf(msg_task_init, "AdjustTargetChange\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
   // Delay 10ms
   HAL_Delay(5);
   // Initialize shortcut button handling
   Shortcut_Init(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
   // Initialization finished
-  sprintf(msg_task_init, "Shortcut...\r\n");
+  sprintf(msg_task_init, "Shortcut\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
   // Delay 10ms
   HAL_Delay(5);
