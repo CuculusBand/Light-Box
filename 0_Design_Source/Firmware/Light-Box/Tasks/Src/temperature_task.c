@@ -20,9 +20,9 @@
 /* Private variables ---------------------------------------------------------*/
 NTC_Measurement_Config_t ntc1_config, ntc2_config;  // NTC config
 extern  ADC_HandleTypeDef hadc1;    // ADC handle defined in main.c
-float   warn_temp_lev1 = 55.0f;     // Set warning temperature level 1
-float   warn_temp_lev2 = 70.0f;     // Set warning temperature level 2
-float   safe_temp = 75.0f;          // Set maximum safe temperature
+float   warn_temp_lev1 = 55.0f;     // Set warning temperature level 1 - 55
+float   warn_temp_lev2 = 68.0f;     // Set warning temperature level 2 - 68
+float   safe_temp = 75.0f;          // Set maximum safe temperature - 75
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
 float   temp_ntc1;                  // Temperature from NTC1
 float   temp_ntc2;                  // Temperature from NTC2
@@ -77,17 +77,17 @@ void Output_Temp_Limit(int state)
 {
     switch(state){
         case 3: // Over temperature
-            temperature_limit_factor = 0.1f;
+            temperature_limit_factor = 0.0f;
             break;
         case 2: // Warning level 2
-            temperature_limit_factor = 0.6f;
+            temperature_limit_factor = 0.55f;
             break;
         case 1: // Warning level 1
-            temperature_limit_factor = 0.9f;
+            temperature_limit_factor = 0.90f;
             break;
         case 0: // Normal temperature
             // Normal operation, no action needed
-            temperature_limit_factor = 1.0f;
+            temperature_limit_factor = 1.00f;
             break;
         case -1: // Sensor error
             temperature_limit_factor = 0.45f;
@@ -116,7 +116,7 @@ void Temperature_Channel_Config(void *argument)
 }
 
 // Temperature monitoring task
-void Temperature_Task(void *argument)
+void Temperature_Monitor(void *argument)
 {
         // Read resistances from both NTC channels
         float resistance1 = NTC_GetResistance(&ntc1_config);
@@ -137,7 +137,7 @@ void Temperature_Task(void *argument)
         osDelay(10);
         // Send temperature state to PC via UART (factory test mode)
         if(factory == 1) {
-            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f\r\n<2>%0.3fΩ %0.2f\r\n", 
+            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f℃\r\n<2>%0.3fΩ %0.2f℃\r\n", 
                 temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
         }
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
