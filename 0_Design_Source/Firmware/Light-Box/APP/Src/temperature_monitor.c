@@ -29,7 +29,6 @@ float   safe_temp = 75.0f;          // Set maximum safe temperature - 75
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
 float   temp_ntc1;                  // Temperature from NTC1
 float   temp_ntc2;                  // Temperature from NTC2
-char    msg_temp[128];                                 // Buffer for UART messages
 // Limitation of brightness based on temperature
 static float temperature_limit_factor = 1.0f; // 1.0 = 100%
 // Last temperature state to avoid redundant UART messages
@@ -145,8 +144,10 @@ void Temperature_Monitor(void *argument)
         osDelay(10);
         // Send temperature state to PC via UART (factory test mode)
         if(factory == 1) {
-            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f°C\r\n<2>%0.3fΩ %0.2f°C\r\n", 
-                temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
+            // UART for debug
+            char msg_temp[128];
+            sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f°C\r\n<2>%0.3fΩ %0.2f°C\r\n",
+            temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
+            HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
         }
-        HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
 }

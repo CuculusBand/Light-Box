@@ -61,10 +61,6 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 char msg_task_init[25];
-char msg_task_task0[64];
-char msg_task_task1[64];
-char msg_task_task2[64];
-char msg_task_task3[64];
 extern uint16_t adc_buffer[3];
 static ShortcutHandle_t shortcut_handle;            // shortcut handler state
 static EncoderMode_t last_mode = MODE_Temperature;  // last encoder mode
@@ -241,6 +237,7 @@ void Run_AdjustTargetChange(void const * argument)
       last_mode = current_mode;
       Beep_NonBlocking(20);
       if(factory == 1) {
+        char msg_task_task2[64];
         sprintf(msg_task_task2, "last_mode: %d [MODE_Temperature = 0, MODE_Brightness = 1]\r\n", last_mode);
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task2, strlen(msg_task_task2), 500);
       }
@@ -279,6 +276,7 @@ void Run_Shortcut(void const * argument)
         PWM_App_Stop();   // stop PWM output
         Beep_Blocking(25);
         if(factory == 1) {
+          char msg_task_task3[40];
           sprintf(msg_task_task3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
         }
@@ -300,6 +298,7 @@ void Run_Shortcut(void const * argument)
           osDelay(50);
           Beep_NonBlocking(80);
           if(factory == 1) {
+          char msg_task_task3[40];
           sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
             HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
           }
@@ -308,10 +307,11 @@ void Run_Shortcut(void const * argument)
       }
       case SHORTCUT_LONG_PRESS:
       {
-      if(factory == 1) {
-              sprintf(msg_task_task3, "LONG_PRESS\r\n");
-              HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
-            }
+        if(factory == 1) {
+          char msg_task_task3[40];
+          sprintf(msg_task_task3, "LONG_PRESS\r\n");
+          HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
+        }
       }
       default:
         break; 

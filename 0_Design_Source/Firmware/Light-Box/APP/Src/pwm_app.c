@@ -20,8 +20,6 @@
 // Timers for PWM control
 extern TIM_HandleTypeDef htim14;
 extern TIM_HandleTypeDef htim16;
-// UART for debug
-static char msg_pwm[64];
 
 // PWM_App Initialization
 /**
@@ -69,6 +67,8 @@ void PWM_App_Update(float brightness, float cct_level) {
     __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint32_t)(cool * arr16));
     // Debug info
     if(factory == 1) {
+        // UART for debug
+        char msg_pwm[64];
         float B = brightness;
         float C = cct_level;
         sprintf(msg_pwm, "Execute: BRI-%0.3f CCT-%0.3f / W-%0.3f C-%0.3f\r\n", B, C, warm, cool);
