@@ -14,7 +14,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 static volatile EncoderMode_t current_mode = MODE_Temperature; // Current adjustment target mode
-#define MODE_SWITCH_ACTIVE (GPIO_PIN_RESET)             // GPIO pin state when the mode switch is active
 #define DEBOUNCE_DELAY_MS  50                           // Debounce delay in milliseconds
 QueueHandle_t xEncoderQueue = NULL;                     // A queue to transfer the encoder mode
 
@@ -36,11 +35,12 @@ void MixedlightSwitch_init(void)
     */
 void MixedlightSwitch_UpdateCurrentMode(void)
 {
+    static GPIO_PinState last_state = GPIO_PIN_SET;
     static uint32_t last_tick = 0;
     uint32_t current_tick = HAL_GetTick();
-
+    GPIO_PinState current_state = HAL_GPIO_ReadPin(Adjustment_Target_SW_GPIO_Port, Adjustment_Target_SW_Pin);
     // Detect button press with debounce
-    if (HAL_GPIO_ReadPin(Adjustment_Target_SW_GPIO_Port, Adjustment_Target_SW_Pin) == MODE_SWITCH_ACTIVE) {
+    if (last_state == GPIO_PIN_SET && current_state == GPIO_PIN_RESET) {
         if ((current_tick - last_tick) > DEBOUNCE_DELAY_MS) {
             last_tick = current_tick;
             
@@ -54,6 +54,7 @@ void MixedlightSwitch_UpdateCurrentMode(void)
             }
         }
     }
+    last_state = current_state;
 }
 
 /* Switch adjustment target */
