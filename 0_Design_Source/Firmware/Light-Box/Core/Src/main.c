@@ -58,8 +58,7 @@
 
 /* USER CODE BEGIN PV */
 char msg_init[30];              // Initialization message
-char msg_failure[30];           // failure message
-char msg_UID[100];              // UID message
+char msg_UID[64];              // UID message
 extern uint32_t uid[3];         // 96 bit STM32 UID
 extern char UID_Base32[21];     // 20 chars for Base32 + 1 for null terminator
 extern char UID_Base64URL[17];  // 16 chars for Base64URL + 1 for null terminator
@@ -162,8 +161,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     HAL_Delay(500);
-    sprintf(msg_failure, "Running FreeRTOS FAILED!\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg_failure, strlen(msg_failure), 100);
+    sprintf(msg_init, "Running FreeRTOS FAILED!\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
   }
   /* USER CODE END 3 */
 }
