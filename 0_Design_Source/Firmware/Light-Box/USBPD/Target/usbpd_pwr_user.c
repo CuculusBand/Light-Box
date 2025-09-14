@@ -27,9 +27,7 @@
 #endif /* _TRACE */
 
 /* USER CODE BEGIN include */
-//#include "usbpd_pwr_user_conf.h"
 #include "main.h"
-
 /* USER CODE END include */
 
 /** @addtogroup BSP
@@ -919,21 +917,20 @@ __weak int32_t BSP_USBPD_PWR_VBUSGetVoltage(uint32_t Instance, uint32_t *pVoltag
   /* USER CODE BEGIN BSP_USBPD_PWR_VBUSGetVoltage */
   /* Check if instance is valid       */
   int32_t ret = BSP_ERROR_NONE;
+
   if ((Instance >= USBPD_PWR_INSTANCES_NBR) || (NULL == pVoltage))
   {
     ret = BSP_ERROR_WRONG_PARAM;
-    *pVoltage = 0;
+    *pVoltage = 0u;
   }
-  else
-  {
-    uint32_t  adc_val;
-    adc_val = LL_ADC_REG_ReadConversionData12(ADC1);
-    uint32_t VSENSE;
-    VSENSE = __LL_ADC_CALC_DATA_TO_VOLTAGE( VDDA_APPLI, \
-    adc_val, \
-    LL_ADC_RESOLUTION_12B); /* mV */
-    /* Value is multiplied by 6.1 (Divider Ra/Rb (51K/10K) for VSENSE) */
-    *pVoltage = VSENSE * 61 / 10;
+  else {
+  uint32_t val;
+  val = __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, LL_ADC_REG_ReadConversionData12(ADC1), LL_ADC_RESOLUTION_12B); /* mV */
+  /* X-NUCLEO-USBPDM board is used */
+  /* Value is multiplied by 6.1 (Divider R55/R54 (51K/10K) for VSENSE) */
+  val *= 610;
+  val /= 100;
+  *pVoltage = val;
   }
   return ret;
   /* USER CODE END BSP_USBPD_PWR_VBUSGetVoltage */

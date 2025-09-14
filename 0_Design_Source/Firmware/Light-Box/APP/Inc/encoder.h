@@ -17,6 +17,7 @@ extern "C" {
 #include "queue.h"
 #include "stm32g0xx_hal.h"
 #include "stm32g0xx_hal_tim.h"
+#include <stdbool.h>
 
 #include "mixedlight_switch.h"
 
@@ -24,8 +25,7 @@ extern "C" {
 #define BRIGHTNESS_MIN    0.0f  // 0.0 ~ 1.0 range for brightness
 #define BRIGHTNESS_MAX    1.0f  // 0.0 ~ 1.0 range for brightness
 #define CCT_LEVEL_MIN     0.0f  // 0.0 ~ 1.0 range for color temperature
-//  #define CCT_LEVEL_MAX     1.0f  // 0.0 ~ 1.0 range for color temperature
-#define CCT_LEVEL_MAX     0.8f  // 0.0 ~ 0.8 range for color temperature
+#define CCT_LEVEL_MAX     1.0f  // 0.0 ~ 1.0 range for color temperature
 /* Encoder step size */
 #define ENCODER_BASE_STEP 0.005f  // base step size
 #define ENCODER_MAX_STEP  0.1f    // max step size
@@ -44,6 +44,12 @@ float Encoder_GetBrightness(void);
 float Encoder_GetCCTLevel(void);
 /* Get current encoder mode */
 EncoderMode_t Encoder_GetMode(void);
+/* Lock the encoder */
+void Encoder_Lock(void);
+/* Unlock the encoder */
+void Encoder_Unlock(TIM_HandleTypeDef *htim_encoder);
+/* Check encoder status */
+bool Encoder_isLocked(void);
 
 #ifdef __cplusplus
 }

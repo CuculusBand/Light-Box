@@ -45,6 +45,12 @@ static void Beep_TimerCallback(void const *argument) {
     BEEP_OFF();
 }
 
+// Create timer for Non-blocking beep
+void Beep_NonBlocking_Init(void) {
+    osTimerDef(beepTimer, Beep_TimerCallback);
+    beepTimerId = osTimerCreate(osTimer(beepTimer), osTimerOnce, NULL);
+}
+
 // Non-blocking beep
 /**
     * @brief Make a non-blocking beep for a specified duration
@@ -52,9 +58,6 @@ static void Beep_TimerCallback(void const *argument) {
     */
 void Beep_NonBlocking(uint32_t duration_ms)
 {
-    osTimerDef(beepTimer, Beep_TimerCallback);
-    // Create the timer for the beep duration
-    osTimerId beepTimerId = osTimerCreate(osTimer(beepTimer), osTimerOnce, NULL);
     if (beepTimerId != NULL) {
         BEEP_ON();                              // start beep
         osTimerStart(beepTimerId, duration_ms); // start the timer

@@ -1,6 +1,6 @@
 # Design_Notes/Firmware_Requirements
 
-## 2025-08-15: Initial Requirements (v0.1)
+## Initial Requirements (v0.1)
 ### Beep
   - Beep to inform the user of the action of the equipment
 
@@ -19,15 +19,31 @@
 
   > Cool = CCT * Brightness       ->  Cool * ARR
 
+  > CCT (0.0~1.0)
+
 ### NTC
   - **Measure the temperature of the boards**
+
+### Shortcut
+  - **Quickly stop output or restore the previous output status**
 
 ---
 # Design_Notes/Firmware_tasks
 - mainTask
+  
+  System initialization, temperature monitoring, status update... 
+
 - AdjustLight
+  
+  Change brightness and color temperature.
+
 - AdjustTarget
-- OutputMode
+  
+  Change the parameters adjusted by the encoder.
+
+- Shortcut
+  
+  Quik shutoff or running.
 
 ---
 # Design_Notes/Firmware_funtion
@@ -85,6 +101,14 @@
   `EncoderMode_t Encoder_GetMode(void) { return current_mode; `
 
 ### PWM
+  - **PWM_App initialization**
+
+  `void PWM_App_Init(void)`
+
+  - **PWM_App Stop**
+
+  `void PWM_App_Stop(void)`
+
   - **Update PWM duty cycle**
   
   `void PWM_App_Update(float brightness, float cct_level)`
@@ -92,7 +116,7 @@
 ### NTC
   - **Configuration for NTC temperature measurement**
   
-  `NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, float vref, float r_ref, float r_ntc_25c, float b_value)`
+  `NTC_Measurement_Config_t NTC_ChannelConfig(ADC_HandleTypeDef* hadc, uint32_t hadc_channel, float hadc_resolution, uint16_t adc_DMAindex, float vref, float r_ref, float r_ntc_25c, float b_value);`
 
   - **Get ADC value and calculate NTC resistance**
   
@@ -102,5 +126,19 @@
   
   `float NTC_GetTemperature(NTC_Measurement_Config_t* config)`
 
-### USBPD
+### Shortcut
+  - **Initialize the shortcut button handling**
 
+  `void Shortcut_Init(ShortcutHandle_t *handle)`
+
+  - **Process button press and return the detected action**
+
+  `ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)`
+
+  - **Save the current light state**
+
+  `void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float cct_level)`
+
+  - **Retrieve the saved light state**
+  
+  `LightState_t Shortcut_GetSavedState(ShortcutHandle_t *handle)`

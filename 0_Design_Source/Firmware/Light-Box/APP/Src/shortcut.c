@@ -6,12 +6,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <stdlib.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 
 #include "shortcut.h"
 
 /* Private variables ---------------------------------------------------------*/
 // Double click detection threshold in milliseconds
-#define DOUBLE_CLICK_THRESHOLD_MS 300
+#define DOUBLE_CLICK_THRESHOLD_MS 400
+#define LONG_PRESS_THRESHOLD_MS   1200
+// Default GPIO state
+static GPIO_PinState last_state = GPIO_PIN_SET;
 
 // Initialize the shortcut button handling
 /** 
@@ -19,45 +25,94 @@
     * @param    handle: Pointer to the ShortcutHandle_t structure to initialize
     * @note     This function should be called during system initialization to set up the shortcut handling.
     */
-void Shortcut_Init(ShortcutHandle_t *handle)
+void Shortcut_Init(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin)
 {
     if (handle == NULL) return;
     
     handle->last_press_time = 0;
     handle->click_count = 0;
+    handle->waiting_for_click = 0;
     handle->saved_state.is_valid = 0;
     handle->saved_state.brightness = 0.0f;
-    handle->saved_state.cct_level = 0.5f;
+    handle->saved_state.cct_level = 0.0f;
+    handle->last_pin_state = HAL_GPIO_ReadPin(port, pin);
 }
 
 // Process button press and return the detected action
 /** 
     * @brief    Process a button press event and determine the action
     * @param    handle: Pointer to the ShortcutHandle_t structure
+    * @param    port: GPIO port of the shortcut button
+    * @param    pin: GPIO pin of the shortcut button
     * @return   Detected ShortcutAction_t based on the button press pattern
     * @note     This function should be called whenever a button press is detected.
     */
-ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)
+ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *port, uint16_t pin)
 {
-    // null check
-    if (handle == NULL) return SHORTCUT_NONE;
-    
-    uint32_t current_time = HAL_GetTick(); // when presseed, get current time
-    uint32_t time_since_last_press = current_time - handle->last_press_time;
-    
-    // update last press time
-    handle->last_press_time = current_time;
-    
-    // judge single or double click
-    if (time_since_last_press < DOUBLE_CLICK_THRESHOLD_MS) {
-        // double click - restore state
-        handle->click_count = 2;
-        return SHORTCUT_RESTORE_STATE;
-    } else {
-        // single click - cut off immediately
-        handle->click_count = 1;
-        return SHORTCUT_QUICK_OFF;
+    // Null check
+    if (!handle) return SHORTCUT_NONE;
+    // Action of the key
+    ShortcutAction_t action = SHORTCUT_NONE;
+    // Get state from GPIO
+    GPIO_PinState pin_state = HAL_GPIO_ReadPin(port, pin);
+    // Get current time
+    uint32_t current_time = HAL_GetTick();
+    // When the button is pressed
+    if (pin_state == GPIO_PIN_RESET && last_state == GPIO_PIN_SET)
+    {
+        handle->last_press_time = current_time;
+        handle->waiting_for_click = 1;
+        handle->click_count++;
     }
+    // Long press
+    if (pin_state == GPIO_PIN_RESET &&
+        handle->waiting_for_click)
+    {
+        if (current_time - handle->last_press_time > LONG_PRESS_THRESHOLD_MS) {
+            handle->waiting_for_click = 0;
+            handle->click_count = 0;
+            action = SHORTCUT_LONG_PRESS;
+        }
+    }
+    // When the button is released
+    if (pin_state == GPIO_PIN_SET &&
+        last_state == GPIO_PIN_RESET)
+    {
+        if (handle->click_count == 1)
+        {
+            // Hold for potential double click
+            handle->last_press_time = current_time;
+        } else if (handle->click_count == 2) {
+            // Double click detected
+            handle->waiting_for_click = 0;
+            handle->click_count = 0;
+            action = SHORTCUT_DOUBLE_CLICK;
+        }
+    }
+    // Timeout for single click
+    if (pin_state == GPIO_PIN_SET &&
+        handle->waiting_for_click &&
+        (current_time - handle->last_press_time > DOUBLE_CLICK_THRESHOLD_MS) &&
+        handle->click_count == 1)
+    {
+        handle->waiting_for_click = 0;
+        handle->click_count = 0;
+        action = SHORTCUT_SINGLE_CLICK;
+    }
+    // Timeout for long press
+    if (pin_state == GPIO_PIN_RESET &&
+        handle->waiting_for_click)
+    {
+        if (current_time - handle->last_press_time > LONG_PRESS_THRESHOLD_MS) {
+            handle->waiting_for_click = 0;
+            handle->click_count = 0;
+            action = SHORTCUT_LONG_PRESS;
+        }
+    }
+    // Update last state
+    last_state = pin_state;
+    // return detected action
+    return action;
 }
 
 // Save the current light state
@@ -70,7 +125,7 @@ ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle)
     */
 void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float cct_level)
 {
-    // null check
+    // Null check
     if (handle == NULL) return;
     
     handle->saved_state.brightness = brightness;
@@ -87,13 +142,13 @@ void Shortcut_SaveCurrentState(ShortcutHandle_t *handle, float brightness, float
     */
 LightState_t Shortcut_GetSavedState(ShortcutHandle_t *handle)
 {
-    // create an invalid state to return if handle is null
+    // Create an invalid state to return if handle is null
     LightState_t invalid_state = {0, 0, 0};
     invalid_state.is_valid = 0;
 
-    // null check
+    // Null check
     if (handle == NULL) return invalid_state;
     
-    // return saved state
+    // Return saved state
     return handle->saved_state;
 }

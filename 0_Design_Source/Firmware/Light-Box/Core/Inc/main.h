@@ -93,8 +93,6 @@ void Error_Handler(void);
 #define VSENSE_GPIO_Port GPIOB
 #define GPIO6_Pin GPIO_PIN_2
 #define GPIO6_GPIO_Port GPIOB
-#define CC1_Pin GPIO_PIN_8
-#define CC1_GPIO_Port GPIOA
 #define ENCODER2_B_Pin GPIO_PIN_6
 #define ENCODER2_B_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_9
@@ -113,7 +111,8 @@ void Error_Handler(void);
 #define Panel_Type_Detec_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define current_chip_series "STM32G0xx" // Current chip series
+#define factory 1  // 1: factory test mode; 0: normal mode
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
