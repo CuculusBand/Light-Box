@@ -22,7 +22,9 @@
 #include "adc.h"
 #include "dma.h"
 #include "tim.h"
+#include "ucpd.h"
 #include "usart.h"
+#include "usbpd.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -113,6 +115,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
+  MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
   Beep_Blocking(40);
   HAL_Delay(50);
@@ -145,7 +148,8 @@ int main(void)
   HAL_Delay(50);
   /* USER CODE END 2 */
 
-  /* Call init function for freertos objects (in cmsis_os2.c) */
+  /* USBPD initialisation ---------------------------------*/
+  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */

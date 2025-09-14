@@ -7,7 +7,7 @@
     "Drivers",
     "Middlewares",
     "APP",
-    "Tasks"
+    "USBPD"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -88,7 +88,6 @@
           "USBPD_PORT_COUNT=1",
           "_RTOS",
           "_SNK",
-          "_TRACE",
           "USBPDCORE_LIB_PD3_FULL",
           "USE_HAL_DRIVER",
           "STM32G071xx",
