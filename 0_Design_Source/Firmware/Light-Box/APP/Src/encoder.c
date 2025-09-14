@@ -24,8 +24,8 @@
 extern QueueHandle_t xEncoderQueue;
 
 /* Private variables ---------------------------------------------------------*/
-static float brightness = 0.01f; // 0.0 ~ 1.0 
-static float cct_level  = 0.5f; // 0.0 ~ 1.0 
+static float brightness = 0.00f; // 0.0 ~ 1.0 
+static float cct_level  = 0.50f; // 0.0 ~ 1.0 
 static EncoderMode_t current_mode = MODE_Temperature;
 static int16_t last_cnt = 0;    // Last encoder count value
 static uint32_t last_tick = 0;  // Last update tick
