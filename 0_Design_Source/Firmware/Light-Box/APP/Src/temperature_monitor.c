@@ -129,20 +129,18 @@ void Temperature_Monitor(void *argument)
         // Read resistances from both NTC channels
         float resistance1 = NTC_GetResistance(&ntc1_config);
         float resistance2 = NTC_GetResistance(&ntc2_config);
-        // Delay for 2ms
-        osDelay(2);
         // Read temperatures from both NTC channels
         temp_ntc1 = NTC_GetTemperature(&ntc1_config);
         temp_ntc2 = NTC_GetTemperature(&ntc2_config);
         // Delay for 2ms
-        osDelay(2);
+        osDelay(5);
         // Update temperature state based on readings
         float temps[] = {temp_ntc1, temp_ntc2};
         int temp_state = SYS_Temp_Level_Check(temps, 2);
         // Limit output power based on the temp state
         Output_Temp_Limit(temp_state);
         // Delay for 10ms
-        osDelay(10);
+        osDelay(5);
         // Send temperature state to PC via UART (factory test mode)
         if(factory == 1) {
             sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f°C\r\n<2>%0.3fΩ %0.2f°C\r\n", 
