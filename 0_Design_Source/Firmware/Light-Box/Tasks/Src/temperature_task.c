@@ -14,6 +14,9 @@
 #include "queue.h"
 #include "usart.h"
 #include "data_format.h"
+#include "beep.h"
+#include "encoder.h"
+#include "pwm_app.h"
 #include "ntc_temperature.h"
 #include "Temperature_Task.h"
 
@@ -26,11 +29,11 @@ float   safe_temp = 75.0f;          // Set maximum safe temperature - 75
 int     temp_state = 0;             // Temperature state variable, -1: unrealistic low temperature or sensor error, 0: normal, 1: warn1, 2: warn2, 3: overtemp
 float   temp_ntc1;                  // Temperature from NTC1
 float   temp_ntc2;                  // Temperature from NTC2
-char    msg_temp[256];                                 // Buffer for UART messages
-char    resistance1_buf[16], resistance2_buf[16];      // Buffer for NTC1 numbers
-char    temperature1_buf[16], temperature2_buf[16];    // Buffer for NTC2 numbers
+char    msg_temp[128];                                 // Buffer for UART messages
 // Limitation of brightness based on temperature
 static float temperature_limit_factor = 1.0f; // 1.0 = 100%
+// Last temperature state to avoid redundant UART messages
+static int last_state = -2;
 
 // Evaluate NTC temperature level
 int NTC_Temp_Level_Check(float tempN)
@@ -75,29 +78,34 @@ int SYS_Temp_Level_Check(float temps[], int num_sensors)
 // Limit output based on temperature state
 void Output_Temp_Limit(int state)
 {
-    switch(state){
-        case 3: // Over temperature
-            temperature_limit_factor = 0.0f;
-            break;
-        case 2: // Warning level 2
-            temperature_limit_factor = 0.55f;
-            break;
-        case 1: // Warning level 1
-            temperature_limit_factor = 0.90f;
-            break;
-        case 0: // Normal temperature
-            // Normal operation, no action needed
-            temperature_limit_factor = 1.00f;
-            break;
-        case -1: // Sensor error
-            temperature_limit_factor = 0.45f;
-            break;
-        case -2: // No sensor
-            temperature_limit_factor = 0.45f;
-            break;
-        default:
-            // No action needed
-            break;
+    if (state != last_state) {
+        last_state = state;
+        switch(state){
+            case 3: // Over temperature
+                temperature_limit_factor = 0.0f;
+                break;
+            case 2: // Warning level 2
+                temperature_limit_factor = 0.55f;
+                break;
+            case 1: // Warning level 1
+                temperature_limit_factor = 0.90f;
+                break;
+            case 0: // Normal temperature
+                // Normal operation, no action needed
+                temperature_limit_factor = 1.00f;
+                break;
+            case -1: // Sensor error
+                temperature_limit_factor = 0.45f;
+                break;
+            case -2: // No sensor
+                temperature_limit_factor = 0.50f;
+                break;
+            default:
+                // No action needed
+                break;
+        }
+        // Update PWM output if temeprature state changes
+        PWM_App_Update(Encoder_GetBrightness(), Encoder_GetCCTLevel());
     }
 }
 
