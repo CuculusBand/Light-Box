@@ -95,12 +95,12 @@ void SYS_Init(void *argument)
   sprintf(msg_task_init, "AdjustLightOutput...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
   // Delay 10ms
-  HAL_Delay(10);
+  HAL_Delay(5);
   // Initialization finished
   sprintf(msg_task_init, "AdjustTargetChange...\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
   // Delay 10ms
-  HAL_Delay(10);
+  HAL_Delay(5);
   // Initialize shortcut button handling
   Shortcut_Init(&shortcut_handle, Mode_Change_SW_GPIO_Port, Mode_Change_SW_Pin);
   // Initialization finished
@@ -265,40 +265,49 @@ void Run_Shortcut(void const * argument)
     // sprintf(msg_task_task3, "Shortcut_ProcessPress %d\r\n", action);
     // HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
     switch (action) {
-      case SHORTCUT_QUICK_OFF:
+      case SHORTCUT_SINGLE_CLICK:
       {
         // Get and save the current state
         float cur_b = Encoder_GetBrightness();
         float cur_c = Encoder_GetCCTLevel();
         Shortcut_SaveCurrentState(&shortcut_handle, cur_b, cur_c);
         // Update PWM and turn off to avoid encoder jitter
-        PWM_App_Update(0.0f, cur_c); // keep cct value but brightness 0
-        PWM_App_Stop();
-        Beep_Blocking(10);
+        PWM_App_Update(0.0f, cur_c);  // keep cct value and set brightness 0
+        PWM_App_Stop();               // stop PWM output
+        Beep_Blocking(25);
         if(factory == 1) {
           sprintf(msg_task_task3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
         }
         break;
       }
-      case SHORTCUT_RESTORE_STATE:
-        {
-          // Get the saved state
-          LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
-          // Restore the saved state if valid
-          if (state_to_restore.is_valid) {
-            // Update PWM
-            PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
-            // Start PWM output
-            PWM_App_Init();
-            Beep_Blocking(20);
-            if(factory == 1) {
-              sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+      case SHORTCUT_DOUBLE_CLICK:
+      {
+        // Get the saved state
+        LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
+        // Restore the saved state if valid
+        if (state_to_restore.is_valid) {
+          // Update PWM
+          PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+          // Start PWM output
+          PWM_App_Init();
+          Beep_Blocking(25);
+          osDelay(50);
+          Beep_NonBlocking(80);
+          if(factory == 1) {
+          sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
+            HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
+          }
+        }
+        break;
+      }
+      case SHORTCUT_LONG_PRESS:
+      {
+      if(factory == 1) {
+              sprintf(msg_task_task3, "LONG_PRESS\r\n");
               HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
             }
-          }
-          break;
-        }
+      }
       default:
         break; 
       }

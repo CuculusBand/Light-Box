@@ -117,7 +117,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   Beep_Blocking(50);
   HAL_Delay(50);
-  Beep_Blocking(150);
+  Beep_Blocking(80);
   HAL_Delay(50);
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
