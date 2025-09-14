@@ -18,8 +18,8 @@ extern "C" {
 /* Shortcut action types */
 typedef enum {
     SHORTCUT_NONE = 0,      // No action
-    SHORTCUT_QUICK_OFF,     // Immediate off
-    SHORTCUT_RESTORE_STATE, // Restore saved state
+    SHORTCUT_SINGLE_CLICK,  // Immediate off
+    SHORTCUT_DOUBLE_CLICK,  // Restore saved state
     SHORTCUT_LONG_PRESS,    // Long press action
 } ShortcutAction_t;
 

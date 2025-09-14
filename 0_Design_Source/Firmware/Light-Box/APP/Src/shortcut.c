@@ -87,18 +87,18 @@ ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *p
             if (current_time - handle->last_press_time <= DOUBLE_CLICK_THRESHOLD_MS) {
                 handle->click_count = 2;    // 2 clicks detected
                 handle->waiting_for_click = 0;  // Stop waiting for clicks
-                return SHORTCUT_RESTORE_STATE;  // Double click action
+                return SHORTCUT_DOUBLE_CLICK;  // Double click action
             } else {
                 // Timeout for double click, return one click
                 handle->waiting_for_click = 0;
-                return SHORTCUT_QUICK_OFF;
+                return SHORTCUT_SINGLE_CLICK;
             }
         }
     }
     // If timeout waiting for the second click
     if (handle->waiting_for_click && (current_time - handle->last_press_time > DOUBLE_CLICK_THRESHOLD_MS)) {
         handle->waiting_for_click = 0;
-        return SHORTCUT_QUICK_OFF;
+        return SHORTCUT_SINGLE_CLICK;
     }
     return SHORTCUT_NONE;
 }
