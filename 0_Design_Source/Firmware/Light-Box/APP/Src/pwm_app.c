@@ -71,7 +71,7 @@ void PWM_App_Update(float brightness, float cct_level) {
     if(factory == 1) {
         float B = brightness;
         float C = cct_level;
-        sprintf(msg_pwm, "Execute: Bri-%0.3f Cct-%0.3f / W-%0.3f C-%0.3f\r\n", B, C, warm, cool);
+        sprintf(msg_pwm, "Execute: BRI-%0.3f CCT-%0.3f / W-%0.3f C-%0.3f\r\n", B, C, warm, cool);
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_pwm, strlen(msg_pwm), 500);
     }
 }
