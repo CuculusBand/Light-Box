@@ -188,7 +188,7 @@ void StartMainTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+    osDelay(1500);
     Temperature_Task(NULL);
     osDelay(1500);
   }
@@ -240,7 +240,11 @@ void Run_AdjustTargetChange(void const * argument)
     if (current_mode != last_mode) {
       // Update the latest mode
       last_mode = current_mode;
-      Beep_NonBlocking(10);
+      Beep_NonBlocking(20);
+      if(factory == 1) {
+        sprintf(msg_task_task2, "last_mode: %d [MODE_Temperature = 0, MODE_Brightness = 1]\r\n", last_mode);
+        HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task2, strlen(msg_task_task2), 500);
+      }
     }
     osDelay(20);
   }

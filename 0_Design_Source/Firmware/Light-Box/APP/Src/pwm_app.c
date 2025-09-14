@@ -8,6 +8,9 @@
 #include "FreeRTOS.h"
 #include "mixedlight_switch.h"
 #include "gpio.h"
+#include "usart.h"
+#include <stdio.h>
+#include <string.h>
 
 #include "pwm_app.h"
 #include "encoder.h"
@@ -17,6 +20,8 @@
 // Timers for PWM control
 extern TIM_HandleTypeDef htim14;
 extern TIM_HandleTypeDef htim16;
+// UART for debug
+static char msg_pwm[64];
 
 // PWM_App Initialization
 /**
@@ -62,4 +67,11 @@ void PWM_App_Update(float brightness, float cct_level) {
     // Update Capture Compare register
     __HAL_TIM_SET_COMPARE(&htim14, TIM_CHANNEL_1, (uint32_t)(warm * arr14));
     __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, (uint32_t)(cool * arr16));
+    // Debug info
+    if(factory == 1) {
+        float B = brightness;
+        float C = cct_level;
+        sprintf(msg_pwm, "Execute: Bri-%0.3f Cct-%0.3f / W-%0.3f C-%0.3f\r\n", B, C, warm, cool);
+        HAL_UART_Transmit(&huart1, (uint8_t*)msg_pwm, strlen(msg_pwm), 500);
+    }
 }

@@ -115,9 +115,9 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-  Beep_Blocking(50);
+  Beep_Blocking(40);
   HAL_Delay(50);
-  Beep_Blocking(80);
+  Beep_Blocking(160);
   HAL_Delay(50);
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
@@ -141,7 +141,7 @@ int main(void)
     UID_To_Base64URL(uid, UID_ENDIAN_BIG);
     sprintf(msg_UID, "UID base64-B: %s\r\n", UID_Base64URL);
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-    Beep_Blocking(200);
+    Beep_Blocking(20);
   }
   HAL_Delay(50);
   /* USER CODE END 2 */
