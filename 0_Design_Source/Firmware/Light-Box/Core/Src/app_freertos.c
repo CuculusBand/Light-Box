@@ -276,8 +276,8 @@ void Run_Shortcut(void const * argument)
         float cur_c = Encoder_GetCCTLevel();
         Shortcut_SaveCurrentState(&shortcut_handle, cur_b, cur_c);
         // Update PWM and turn off to avoid encoder jitter
-        PWM_App_Update(0.0f, cur_c);  // keep cct value and set brightness 0
-        PWM_App_Stop();               // stop PWM output
+        Encoder_Lock();   // lock the encoder
+        PWM_App_Stop();   // stop PWM output
         Beep_Blocking(25);
         if(factory == 1) {
           sprintf(msg_task_task3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
@@ -291,6 +291,8 @@ void Run_Shortcut(void const * argument)
         LightState_t state_to_restore = Shortcut_GetSavedState(&shortcut_handle);
         // Restore the saved state if valid
         if (state_to_restore.is_valid) {
+          // Unlock the encoder
+          Encoder_Unlock();
           // Update PWM
           PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
           // Start PWM output

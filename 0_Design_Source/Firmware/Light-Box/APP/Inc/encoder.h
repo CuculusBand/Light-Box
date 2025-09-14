@@ -17,6 +17,7 @@ extern "C" {
 #include "queue.h"
 #include "stm32g0xx_hal.h"
 #include "stm32g0xx_hal_tim.h"
+#include <stdbool.h>
 
 #include "mixedlight_switch.h"
 
@@ -43,6 +44,12 @@ float Encoder_GetBrightness(void);
 float Encoder_GetCCTLevel(void);
 /* Get current encoder mode */
 EncoderMode_t Encoder_GetMode(void);
+/* Lock the encoder */
+void Encoder_Lock(void);
+/* Unlock the encoder */
+void Encoder_Unlock(void);
+/* Check encoder status */
+bool Encoder_isLocked(void);
 
 #ifdef __cplusplus
 }
