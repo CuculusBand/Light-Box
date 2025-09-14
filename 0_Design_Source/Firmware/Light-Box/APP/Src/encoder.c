@@ -113,7 +113,7 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         if (Encoder_UpdateCallback) {
             // Debug info
             if(factory == 1) {
-                sprintf(msg_encoder, "Require: BRI-%0.3f CCT-%0.3f / step: %0.4f\r\n ", brightness, cct_level, delta_step);
+                sprintf(msg_encoder, "Require: BRI-%0.3f CCT-%0.3f / step: %0.4f\r\n", brightness, cct_level, delta_step);
                 HAL_UART_Transmit(&huart1, (uint8_t*)msg_encoder, strlen(msg_encoder), 500);
             }
             // Execute callback

@@ -117,11 +117,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   Beep_Blocking(40);
   HAL_Delay(50);
-  Beep_Blocking(160);
+  Beep_Blocking(120);
   HAL_Delay(50);
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
-  HAL_Delay(200);
+  HAL_Delay(50);
   uint32_t UID_ADDR= Get_UID_address(current_chip_series);
   sprintf(msg_UID, "UID ADDR: 0x%08lX\r\n", UID_ADDR);
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
@@ -141,7 +141,7 @@ int main(void)
     UID_To_Base64URL(uid, UID_ENDIAN_BIG);
     sprintf(msg_UID, "UID base64-B: %s\r\n", UID_Base64URL);
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-    Beep_Blocking(20);
+    // Beep_Blocking(20);
   }
   HAL_Delay(50);
   /* USER CODE END 2 */
