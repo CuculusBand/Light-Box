@@ -48,8 +48,8 @@ void Encoder_Init(TIM_HandleTypeDef *htim_encoder)
     if (htim_encoder == NULL) return;   // return if not initialized
     last_cnt = __HAL_TIM_GET_COUNTER(htim_encoder);
     HAL_TIM_Encoder_Start(htim_encoder, TIM_CHANNEL_ALL);
-    brightness = 0.01f;
-    cct_level = 0.5f;
+    brightness = 0.00f;
+    cct_level = 0.50f;
     current_mode = MODE_Temperature;
 }
 
