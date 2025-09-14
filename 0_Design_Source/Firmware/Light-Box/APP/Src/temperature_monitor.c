@@ -85,7 +85,7 @@ void Output_Temp_Limit(int state)
                 temperature_limit_factor = 0.0f;
                 break;
             case 2: // Warning level 2
-                temperature_limit_factor = 0.55f;
+                temperature_limit_factor = 0.40f;
                 break;
             case 1: // Warning level 1
                 temperature_limit_factor = 0.90f;
