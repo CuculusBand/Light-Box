@@ -47,7 +47,7 @@ EncoderMode_t Encoder_GetMode(void);
 /* Lock the encoder */
 void Encoder_Lock(void);
 /* Unlock the encoder */
-void Encoder_Unlock(void);
+void Encoder_Unlock(TIM_HandleTypeDef *htim_encoder);
 /* Check encoder status */
 bool Encoder_isLocked(void);
 

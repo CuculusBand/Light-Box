@@ -291,7 +291,7 @@ void Run_Shortcut(void const * argument)
         // Restore the saved state if valid
         if (state_to_restore.is_valid) {
           // Unlock the encoder
-          Encoder_Unlock();
+          Encoder_Unlock(&htim2);
           // Update PWM
           PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
           // Start PWM output

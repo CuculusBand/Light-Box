@@ -139,8 +139,10 @@ EncoderMode_t Encoder_GetMode(void) {
 void Encoder_Lock(void) {
     encoder_isLocked = true;
 }
-void Encoder_Unlock(void) {
-    encoder_isLocked = true;
+void Encoder_Unlock(TIM_HandleTypeDef *htim_encoder) {
+    encoder_isLocked = false;
+    // Reset last count to avoid jump
+    last_cnt = __HAL_TIM_GET_COUNTER(htim_encoder);
 }
 // Function to check if the encoder is active
 bool Encoder_isLocked(void) {
