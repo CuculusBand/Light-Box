@@ -277,7 +277,7 @@ void Run_Shortcut(void const * argument)
         // Update PWM and turn off to avoid encoder jitter
         Encoder_Lock();   // lock the encoder
         PWM_App_Stop();   // stop PWM output
-        Beep_Blocking(25);
+        Beep_NonBlocking(40);
         if(factory == 1) {
           sprintf(msg_task_task3, "QUICK_OFF (b_%0.3f c_%0.3f)\r\n", cur_b, cur_c);
           HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
@@ -296,9 +296,7 @@ void Run_Shortcut(void const * argument)
           PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
           // Start PWM output
           PWM_App_Init();
-          Beep_Blocking(25);
-          osDelay(50);
-          Beep_NonBlocking(80);
+          Beep_NonBlocking(85);
           if(factory == 1) {
           sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
             HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_task3, strlen(msg_task_task3), 500);
