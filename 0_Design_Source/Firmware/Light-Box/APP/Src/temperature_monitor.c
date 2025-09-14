@@ -147,6 +147,6 @@ void Temperature_Monitor(void *argument)
         if(factory == 1) {
             sprintf(msg_temp, "Current State: %d -- Current Temperature:\r\n<1>%0.3fΩ %0.2f°C\r\n<2>%0.3fΩ %0.2f°C\r\n", 
                 temp_state, resistance1, temp_ntc1, resistance2, temp_ntc2);
+            HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
         }
-        HAL_UART_Transmit(&huart1, (uint8_t*)msg_temp, strlen(msg_temp), 250);
 }
