@@ -100,7 +100,9 @@ ShortcutAction_t Shortcut_ProcessPress(ShortcutHandle_t *handle, GPIO_TypeDef *p
         action = SHORTCUT_SINGLE_CLICK;
     }
     // Timeout for long press
-    if (pin_state == GPIO_PIN_RESET && handle->waiting_for_click) {
+    if (pin_state == GPIO_PIN_RESET &&
+        handle->waiting_for_click)
+    {
         if (current_time - handle->last_press_time > LONG_PRESS_THRESHOLD_MS) {
             handle->waiting_for_click = 0;
             handle->click_count = 0;
