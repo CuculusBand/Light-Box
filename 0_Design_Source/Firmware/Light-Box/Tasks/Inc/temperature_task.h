@@ -28,7 +28,7 @@ float Temperature_Get_Limit(void);
 // Config temperature monitoring channels
 void Temperature_Channel_Config(void *argument);
 // Task of monitoring temperature using NTC thermistors
-void Temperature_Task(void *argument);
+void Temperature_Monitor(void *argument);
 
 #ifdef __cplusplus
 }
