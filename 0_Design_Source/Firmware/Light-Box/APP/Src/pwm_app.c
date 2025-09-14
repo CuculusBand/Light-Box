@@ -14,7 +14,7 @@
 
 #include "pwm_app.h"
 #include "encoder.h"
-#include "temperature_task.h"
+#include "temperature_monitor.h"
 
 /* Private variables ---------------------------------------------------------*/
 // Timers for PWM control

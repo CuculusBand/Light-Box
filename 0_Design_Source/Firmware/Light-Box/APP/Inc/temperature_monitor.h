@@ -1,11 +1,11 @@
 /**
-  * @file    temperature_task.h
-  * @brief   function prototypes for the temperature_task.c file
+  * @file    temperature_monitor.h
+  * @brief   function prototypes for the temperature_monitor.c file
   */
 
 // Define to prevent recursive inclusion -------------------------------------
-#ifndef __TEMPERATURE_TASK_H
-#define __TEMPERATURE_TASK_H
+#ifndef __TEMPERATURE_MONITOR_H
+#define __TEMPERATURE_MONITOR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,4 +34,4 @@ void Temperature_Monitor(void *argument);
 }
 #endif
 
-#endif /* __TEMPERATURE_TASK_H */
+#endif /* __TEMPERATURE_MONITOR_H */

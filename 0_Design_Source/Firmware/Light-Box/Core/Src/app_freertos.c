@@ -41,7 +41,7 @@
 #include "ntc_temperature.h"
 #include "shortcut.h"
 // task file
-#include "Temperature_Task.h"
+#include "temperature_monitor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

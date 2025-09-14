@@ -1,5 +1,5 @@
 /**
-  * @file    temperature_task.c
+  * @file    temperature_monitor.c
   * @brief   Implementation of temperature monitoring task using NTC thermistors
   */
 
@@ -18,7 +18,7 @@
 #include "encoder.h"
 #include "pwm_app.h"
 #include "ntc_temperature.h"
-#include "Temperature_Task.h"
+#include "temperature_monitor.h"
 
 /* Private variables ---------------------------------------------------------*/
 NTC_Measurement_Config_t ntc1_config, ntc2_config;  // NTC config
