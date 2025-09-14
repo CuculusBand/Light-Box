@@ -31,6 +31,8 @@ static int16_t last_cnt = 0;    // Last encoder count value
 static uint32_t last_tick = 0;  // Last update tick
 // Flag to indicate if encoder is locked
 static bool encoder_isLocked = false;
+// UART for debug
+static char msg_encoder[64];
 
 /* * Callback function pointer for encoder updates
  * This will be called with the new brightness and color temperature values
@@ -113,8 +115,6 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         if (Encoder_UpdateCallback) {
             // Debug info
             if(factory == 1) {
-                // UART for debug
-                char msg_encoder[64];
                 sprintf(msg_encoder, "Require: BRI-%0.3f CCT-%0.3f / step: %0.4f\r\n", brightness, cct_level, delta_step);
                 HAL_UART_Transmit(&huart1, (uint8_t*)msg_encoder, strlen(msg_encoder), 500);
             }
