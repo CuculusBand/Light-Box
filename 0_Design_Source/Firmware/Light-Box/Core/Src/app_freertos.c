@@ -212,7 +212,7 @@ void Run_AdjustLightOutput(void const * argument)
   {
     // Process encoder action
     Encoder_Update(&htim2);
-    osDelay(100);
+    osDelay(50);
   }
   /* USER CODE END Run_AdjustLightOutput */
 }
