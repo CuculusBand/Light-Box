@@ -86,7 +86,6 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         uint32_t now = HAL_GetTick();
         uint32_t dt = now - last_tick;
         last_tick = now;
-
         // set speed factor based on time interval
         float speed_factor = 1.0f;
         if (dt > 0) {
