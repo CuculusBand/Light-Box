@@ -38,3 +38,22 @@
   - Output Adjust
 - **Battery Status LED**:
   - Bi-color (Red/Green)
+
+## 2025-09-10: Update Requirements (v0.3)
+### Power
+- **Battery**: 1× or 2× 18650
+- **External**: USB-C 5V/2A (Max 10W)
+### LED Control
+- **LED Types**:
+  - CW
+- **PWM Channels**: 2 ( CW )
+- **Control Modes**:
+    ```plaintext
+    CW Mode:  [CW↑, CW↓, WW↑, WW↓]
+### UI
+- **Switches**:
+  - Power On/Off
+  - Fast cut-off & restore
+  - Output Adjust
+- **Battery Status LED**:
+  - Bi-color (Orange/Green)
