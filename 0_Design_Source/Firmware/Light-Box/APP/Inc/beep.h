@@ -32,7 +32,7 @@ void Beep_Blocking(uint32_t duration_ms);
 /* Non-blocking beep operation */
 // Create timer for Non-blocking beep
 void Beep_NonBlocking_Init(void);
-// void Beep_NonBlocking(Beep_OSHandleTypeDef *hbeep, uint32_t duration_ms);
+// Set one non-blocking beep
 void Beep_NonBlocking(uint32_t duration_ms);
 
 #ifdef __cplusplus
