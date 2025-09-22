@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "mixedlight_switch.h"
 #include "encoder.h"
@@ -81,7 +82,7 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
     int32_t cnt = __HAL_TIM_GET_COUNTER(htim_encoder);
     int32_t delta = cnt - last_cnt;
     last_cnt = cnt;
-    // Process the change in encoder count
+    if (delta == 0 || labs(delta) < 1) return;  // no change or too small change
     if (delta != 0) {
         uint32_t now = HAL_GetTick();
         uint32_t dt = now - last_tick;
@@ -90,10 +91,14 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         float speed_factor = 1.0f;
         if (dt > 0) {
             float FAST_THRESHOLD = 150.0f;  // threshold for fast rotation
-            float SCALE = 70.0f;            // scale for speed factor calculation
-            speed_factor = expf((float)(FAST_THRESHOLD - dt) / SCALE);
-            if (speed_factor < 1.0f) speed_factor = 1.0f;
-            if (speed_factor > 10.0f) speed_factor = 10.0f;
+            float MAX_FACTOR = 5.0f;        // maximum speed factor
+            if (dt < FAST_THRESHOLD) {
+                speed_factor = 1.0f + (FAST_THRESHOLD - dt) / FAST_THRESHOLD * (MAX_FACTOR - 1.0f);
+                if (speed_factor < 1.0f) speed_factor = 1.0f;
+                if (speed_factor > 10.0f) speed_factor = 10.0f;
+            } else {
+                speed_factor = 1.0f;
+            }
         }
         // Calculate and L=limit step size
         float step = ENCODER_BASE_STEP * speed_factor;
