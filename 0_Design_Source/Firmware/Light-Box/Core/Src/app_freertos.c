@@ -205,9 +205,12 @@ void Run_AdjustLightOutput(void const * argument)
   /* USER CODE BEGIN Run_AdjustLightOutput */
   osDelay(5);
   // Initialize PWM application
-  PWM_App_Start();
+  PWM_App_Init();
   // Create a queue to transfer the encoder's mode
   MixedlightSwitch_init();
+  // Start PWM output
+  osDelay(20);
+  PWM_App_Start();
   /* Infinite loop */
   for(;;)
   {
