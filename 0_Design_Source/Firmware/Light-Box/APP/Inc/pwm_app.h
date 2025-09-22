@@ -16,6 +16,8 @@ extern "C" {
 
 /* PWM_App initialization */
 void PWM_App_Init(void);
+/* PWM_App start */
+void PWM_App_Start(void);
 /* PWM_App Stop */
 void PWM_App_Stop(void);
 /* Update PWM duty cycle based on encoder input */

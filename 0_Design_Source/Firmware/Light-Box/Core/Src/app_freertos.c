@@ -205,7 +205,7 @@ void Run_AdjustLightOutput(void const * argument)
   /* USER CODE BEGIN Run_AdjustLightOutput */
   osDelay(5);
   // Initialize PWM application
-  PWM_App_Init();
+  PWM_App_Start();
   // Create a queue to transfer the encoder's mode
   MixedlightSwitch_init();
   /* Infinite loop */
@@ -296,7 +296,7 @@ void Run_Shortcut(void const * argument)
           // Update PWM
           PWM_App_Update(shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);
           // Start PWM output
-          PWM_App_Init();
+          PWM_App_Start();
           Beep_NonBlocking(85);
           if(factory == 1) {
           sprintf(msg_task_task3, "RESTORE_STATE (b_%0.3f c_%0.3f)\r\n", shortcut_handle.saved_state.brightness, shortcut_handle.saved_state.cct_level);

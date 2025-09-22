@@ -34,6 +34,17 @@ void PWM_App_Init(void)
     HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
 }
 
+// PWM_App Start
+/**
+ * @brief   Initialize PWM for light control
+ * @note    This function starts the PWM channels for brightness and color temperature control.
+ */
+void PWM_App_Start(void)
+{
+    HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+}
+
 // PWM_App Stop
 /**
  * @brief   Stop PWM for light control
