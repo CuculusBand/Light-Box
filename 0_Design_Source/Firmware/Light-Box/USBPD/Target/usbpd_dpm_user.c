@@ -233,11 +233,11 @@ void USBPD_DPM_Notification(uint8_t PortNum, USBPD_NotifyEventValue_TypeDef Even
 //    case USBPD_NOTIFY_POWER_EXPLICIT_CONTRACT :
 //      break;
     case USBPD_NOTIFY_REQUEST_ACCEPTED:
-      Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
-      osDelay(100);           // Wait for the beep to finish
-      Beep_NonBlocking(175);  // Beep for 175ms on power request accepted
-      osDelay(225);           // Wait for the beep to finish
-      Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
+      // Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
+      // osDelay(100);           // Wait for the beep to finish
+      // Beep_NonBlocking(175);  // Beep for 175ms on power request accepted
+      // osDelay(225);           // Wait for the beep to finish
+      // Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
       break;
 //    case USBPD_NOTIFY_REQUEST_REJECTED:
 //    case USBPD_NOTIFY_REQUEST_WAIT:
