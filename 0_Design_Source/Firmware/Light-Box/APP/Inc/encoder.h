@@ -28,7 +28,7 @@ extern "C" {
 #define CCT_LEVEL_MAX     1.0f  // 0.0 ~ 1.0 range for color temperature
 /* Encoder step size */
 #define ENCODER_BASE_STEP 0.005f  // base step size
-#define ENCODER_MAX_STEP  0.1f    // max step size
+#define ENCODER_MAX_STEP  0.02f    // max step size
 /* Type definition for parameters used in PWM */
 typedef void (*EncoderCallback)(float brightness, float cct_level);
 
