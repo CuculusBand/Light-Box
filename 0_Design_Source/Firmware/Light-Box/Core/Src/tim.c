@@ -154,7 +154,7 @@ void MX_TIM14_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM14_Init 2 */
-
+  __HAL_TIM_SET_COMPARE(&htim14, TIM_CHANNEL_1, 0);
   /* USER CODE END TIM14_Init 2 */
   HAL_TIM_MspPostInit(&htim14);
 
@@ -212,7 +212,7 @@ void MX_TIM16_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM16_Init 2 */
-
+  __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 0);
   /* USER CODE END TIM16_Init 2 */
   HAL_TIM_MspPostInit(&htim16);
 
