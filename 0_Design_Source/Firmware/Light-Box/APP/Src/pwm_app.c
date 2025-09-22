@@ -85,5 +85,9 @@ void PWM_App_Update(float brightness, float cct_level) {
         float C = cct_level;
         sprintf(msg_pwm, "Execute: BRI-%0.3f CCT-%0.3f / W-%0.3f C-%0.3f\r\n", B, C, warm, cool);
         HAL_UART_Transmit(&huart1, (uint8_t*)msg_pwm, strlen(msg_pwm), 500);
+        uint32_t crr14_Load = __HAL_TIM_GET_COMPARE(&htim14, TIM_CHANNEL_1);
+        uint32_t crr16_Load = __HAL_TIM_GET_COMPARE(&htim16, TIM_CHANNEL_1);
+        sprintf(msg_pwm, "Execute: TIM14-%ld TIM16-%ld\r\n", crr14_Load, crr16_Load);
+        HAL_UART_Transmit(&huart1, (uint8_t*)msg_pwm, strlen(msg_pwm), 500);
     }
 }
