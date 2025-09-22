@@ -30,6 +30,9 @@ static char msg_pwm[64];
  */
 void PWM_App_Init(void)
 {
+    // Stop PWM channels first
+    HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
     // Set initial duty cycle to 0
     __HAL_TIM_SET_COMPARE(&htim14, TIM_CHANNEL_1, 0);
     __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 0);

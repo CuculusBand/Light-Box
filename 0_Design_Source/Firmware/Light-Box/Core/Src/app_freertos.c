@@ -88,6 +88,8 @@ void SYS_Init(void *argument)
   Encoder_RegisterCallback(Encoder_AppCallback);
   // Initialize encoder
   Encoder_Init(&htim2);
+  // Initialize PWM application
+  PWM_App_Init();
   // Initialization finished
   sprintf(msg_task_init, "AdjustLightOutput\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_task_init, strlen(msg_task_init), 500);
