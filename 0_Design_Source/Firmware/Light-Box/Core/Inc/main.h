@@ -85,8 +85,6 @@ void Error_Handler(void);
 #define Mode_Change_SW_GPIO_Port GPIOA
 #define PWM2_Pin GPIO_PIN_6
 #define PWM2_GPIO_Port GPIOA
-#define PWM3_Pin GPIO_PIN_7
-#define PWM3_GPIO_Port GPIOA
 #define Beep_Ctrl_Pin GPIO_PIN_0
 #define Beep_Ctrl_GPIO_Port GPIOB
 #define VSENSE_Pin GPIO_PIN_1

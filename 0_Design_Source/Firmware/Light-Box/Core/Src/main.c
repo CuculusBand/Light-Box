@@ -115,7 +115,6 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM16_Init();
-  MX_TIM17_Init();
   MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
