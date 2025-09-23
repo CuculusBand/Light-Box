@@ -109,11 +109,12 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
+  MX_TIM14_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
-  //MX_UCPD1_Init();
+  MX_TIM16_Init();
+  MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
-  // HAL_Delay(50);
   if(factory == 1) { // Convert UID and send it to PC only in factory test mode
     sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
@@ -137,11 +138,10 @@ int main(void)
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
     // Beep_Blocking(20);
   }
-  // HAL_Delay(50);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  //MX_USBPD_Init();
+  MX_USBPD_Init();
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
