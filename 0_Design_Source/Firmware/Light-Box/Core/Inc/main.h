@@ -91,8 +91,6 @@ void Error_Handler(void);
 #define VSENSE_GPIO_Port GPIOB
 #define GPIO6_Pin GPIO_PIN_2
 #define GPIO6_GPIO_Port GPIOB
-#define ENCODER2_B_Pin GPIO_PIN_6
-#define ENCODER2_B_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_9
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_10
@@ -103,8 +101,6 @@ void Error_Handler(void);
 #define ENCODER1_B_GPIO_Port GPIOB
 #define Fan_Ctrl_Pin GPIO_PIN_4
 #define Fan_Ctrl_GPIO_Port GPIOB
-#define ENCODER2_A_Pin GPIO_PIN_5
-#define ENCODER2_A_GPIO_Port GPIOB
 #define Panel_Type_Detec_Pin GPIO_PIN_8
 #define Panel_Type_Detec_GPIO_Port GPIOB
 
