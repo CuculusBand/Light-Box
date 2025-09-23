@@ -84,6 +84,9 @@ static void Encoder_AppCallback(float new_brightness, float new_cct_level)
 // System initialization function
 void SYS_Init(void *argument)
 {
+  // Initialize PWM channels
+  MX_TIM14_Init();
+  MX_TIM16_Init();
   // Register Encoder callback
   Encoder_RegisterCallback(Encoder_AppCallback);
   // Initialize encoder

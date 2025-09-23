@@ -102,8 +102,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  HAL_GPIO_WritePin(PWM1_GPIO_Port, PWM1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(PWM2_GPIO_Port, PWM2_Pin, GPIO_PIN_RESET);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -111,22 +110,20 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_TIM3_Init();
-  MX_TIM14_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
-  MX_TIM16_Init();
-  MX_UCPD1_Init();
+  //MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
   sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
-  HAL_Delay(50);
-  uint32_t UID_ADDR= Get_UID_address(current_chip_series);
-  sprintf(msg_UID, "UID ADDR: 0x%08lX\r\n", UID_ADDR);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
-  Get_Chip_UID(UID_ADDR);
-  sprintf(msg_UID, "UID: %08lX-%08lX-%08lX\r\n", uid[0], uid[1], uid[2]);
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+  // HAL_Delay(50);
   if(factory == 1) { // Convert UID and send it to PC only in factory test mode
+    uint32_t UID_ADDR= Get_UID_address(current_chip_series);
+    sprintf(msg_UID, "UID ADDR: 0x%08lX\r\n", UID_ADDR);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    Get_Chip_UID(UID_ADDR);
+    sprintf(msg_UID, "UID: %08lX-%08lX-%08lX\r\n", uid[0], uid[1], uid[2]);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
     UID_To_Base32(uid, UID_ENDIAN_LITTLE);
     sprintf(msg_UID, "UID base32-L: %s\r\n", UID_Base32);
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
@@ -141,11 +138,12 @@ int main(void)
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
     // Beep_Blocking(20);
   }
-  HAL_Delay(50);
+  // HAL_Delay(50);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  //MX_USBPD_Init();
+  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
