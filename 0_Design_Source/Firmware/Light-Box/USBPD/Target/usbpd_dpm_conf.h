@@ -30,9 +30,6 @@
 #include "usbpd_dpm_user.h"
 #include "usbpd_vdm_user.h"
 
-#include "gui_api.h"
-#include "usbpd_gui_memmap.h"
-
 /* USER CODE BEGIN Includes */
 /* Section where include file can be added */
 
@@ -75,7 +72,7 @@ USBPD_SettingsTypeDef       DPM_Settings[USBPD_PORT_COUNT] =
     .PE_CapscounterSupport = USBPD_FALSE,       /* support caps counter                                    */
     .CAD_RoleToggle = USBPD_FALSE,               /* CAD role toggle                                         */
     .CAD_TryFeature = 0,              /* CAD try feature                                         */
-    .CAD_AccesorySupport = USBPD_TRUE,         /* CAD accessory support                                   */
+    .CAD_AccesorySupport = USBPD_FALSE,         /* CAD accessory support                                   */
     .PE_PD3_Support.d =                           /*!< PD3 SUPPORT FEATURE                                              */
     {
       .PE_UnchunkSupport                = USBPD_FALSE,  /* support Unchunked mode (valid only spec revision 3.0)   */
@@ -109,7 +106,7 @@ USBPD_IdSettingsTypeDef          DPM_ID_Settings[USBPD_PORT_COUNT] =
 USBPD_USER_SettingsTypeDef       DPM_USER_Settings[USBPD_PORT_COUNT] =
 {
   {
-    .PE_DataSwap = USBPD_TRUE,                  /* support data swap                                       */
+    .PE_DataSwap = USBPD_FALSE,                  /* support data swap                                       */
     .PE_VconnSwap = USBPD_FALSE,                 /* support VCONN swap                                  */
     .PE_DR_Swap_To_DFP = USBPD_TRUE,                  /*  Support of DR Swap to DFP                                  */
     .PE_DR_Swap_To_UFP = USBPD_TRUE,                  /*  Support of DR Swap to UFP                                  */

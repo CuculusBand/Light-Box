@@ -36,7 +36,7 @@
 #include "stdio.h"
 #endif /* _TRACE */
 /* USER CODE BEGIN Includes */
-
+#include "beep.h"
 /* USER CODE END Includes */
 
 /** @addtogroup STM32_USBPD_APPLICATION
@@ -56,8 +56,6 @@
 /** @defgroup USBPD_USER_PRIVATE_DEFINES USBPD USER Private Defines
   * @{
   */
-#define DPM_GUI_NOTIF_ISCONNECTED       (1 << 5)
-#define DPM_GUI_NOTIF_POWER_EVENT       (1 << 15)
 #if (osCMSIS < 0x20000U)
 void                USBPD_DPM_UserExecute(void const *argument);
 #else
@@ -111,9 +109,6 @@ void                USBPD_DPM_UserExecute(void *argument);
 /** @defgroup USBPD_USER_PRIVATE_VARIABLES USBPD USER Private Variables
   * @{
   */
-GUI_NOTIFICATION_POST         DPM_GUI_PostNotificationMessage   = NULL;
-GUI_NOTIFICATION_FORMAT_SEND  DPM_GUI_FormatAndSendNotification = NULL;
-GUI_SAVE_INFO                 DPM_GUI_SaveInfo                  = NULL;
 
 /* USER CODE BEGIN Private_Variables */
 
@@ -160,20 +155,6 @@ USBPD_StatusTypeDef USBPD_DPM_UserInit(void)
 }
 
 /**
-  * @brief  Function to set the function ptr linked to GUI interface
-  * @param  PtrFormatSend Pointer on function to format and send GUI notifications
-  * @param  PtrPost       Pointer on function to send GUI notifications
-  * @param  PtrSaveInfo   Pointer on function to save information from Port Partner
-  * @retval None
-  */
-void USBPD_DPM_SetNotification_GUI(GUI_NOTIFICATION_FORMAT_SEND PtrFormatSend, GUI_NOTIFICATION_POST PtrPost, GUI_SAVE_INFO PtrSaveInfo)
-{
-  DPM_GUI_PostNotificationMessage   = PtrPost;
-  DPM_GUI_FormatAndSendNotification = PtrFormatSend;
-  DPM_GUI_SaveInfo                  = PtrSaveInfo;
-}
-
-/**
   * @brief  User delay implementation which is OS dependent
   * @param  Time time in ms
   * @retval None
@@ -207,25 +188,13 @@ void USBPD_DPM_UserExecute(void *argument)
   */
 void USBPD_DPM_UserCableDetection(uint8_t PortNum, USBPD_CAD_EVENT State)
 {
-  switch(State)
-  {
-  case USBPD_CAD_EVENT_ATTEMC:
-  case USBPD_CAD_EVENT_ATTACHED:
-    /* Format and send a notification to GUI if enabled */
-    if (NULL != DPM_GUI_FormatAndSendNotification)
-    {
-      DPM_GUI_FormatAndSendNotification(PortNum, DPM_GUI_NOTIF_ISCONNECTED, 0);
-    }
-    break;
-  default :
-    /* Format and send a notification to GUI if enabled */
-    if (NULL != DPM_GUI_FormatAndSendNotification)
-    {
-      DPM_GUI_FormatAndSendNotification(PortNum, DPM_GUI_NOTIF_ISCONNECTED | DPM_GUI_NOTIF_POWER_EVENT, 0);
-    }
-  }
 /* USER CODE BEGIN USBPD_DPM_UserCableDetection */
-DPM_USER_DEBUG_TRACE(PortNum, "ADVICE: update USBPD_DPM_UserCableDetection");
+if(State == USBPD_CAD_EVENT_CABLE_ATTACHED) {
+  Beep_NonBlocking(50); // Beep for 30ms on cable attach
+}
+else if(State == USBPD_CAD_EVENT_CABLE_DETACHED) {
+  Beep_NonBlocking(50); // Beep for 60ms on cable detach
+}
 /* USER CODE END USBPD_DPM_UserCableDetection */
 }
 
@@ -257,19 +226,19 @@ void USBPD_DPM_UserTimerCounter(uint8_t PortNum)
   */
 void USBPD_DPM_Notification(uint8_t PortNum, USBPD_NotifyEventValue_TypeDef EventVal)
 {
-  /* Forward PE notifications to GUI if enabled */
-  if (NULL != DPM_GUI_PostNotificationMessage)
-  {
-    DPM_GUI_PostNotificationMessage(PortNum, EventVal);
-  }
 /* USER CODE BEGIN USBPD_DPM_Notification */
   /* Manage event notified by the stack? */
   switch(EventVal)
   {
 //    case USBPD_NOTIFY_POWER_EXPLICIT_CONTRACT :
 //      break;
-//    case USBPD_NOTIFY_REQUEST_ACCEPTED:
-//      break;
+    case USBPD_NOTIFY_REQUEST_ACCEPTED:
+      Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
+      // osDelay(100);           // Wait for the beep to finish
+      // Beep_NonBlocking(175);  // Beep for 175ms on power request accepted
+      // osDelay(225);           // Wait for the beep to finish
+      // Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
+      break;
 //    case USBPD_NOTIFY_REQUEST_REJECTED:
 //    case USBPD_NOTIFY_REQUEST_WAIT:
 //      break;
@@ -333,10 +302,6 @@ void USBPD_DPM_GetDataInfo(uint8_t PortNum, USBPD_CORE_DataInfoType_TypeDef Data
   /* Check type of information targeted by request */
   switch(DataId)
   {
-    case USBPD_CORE_DATATYPE_SNK_PDO: /*!< Handling of port Sink PDO, requested by get sink capa*/
-    USBPD_PWR_IF_GetPortPDOs(PortNum, DataId, Ptr, Size);
-    *Size *= 4;
-    break;
 //  case USBPD_CORE_DATATYPE_SNK_PDO:           /*!< Handling of port Sink PDO, requested by get sink capa*/
     // break;
 //  case USBPD_CORE_EXTENDED_CAPA:              /*!< Source Extended capability message content          */
@@ -353,6 +318,10 @@ void USBPD_DPM_GetDataInfo(uint8_t PortNum, USBPD_CORE_DataInfoType_TypeDef Data
     // break;
 //  case USBPD_CORE_BATTERY_CAPABILITY:         /*!< Retrieve of Battery capability message content      */
     // break;
+    case USBPD_CORE_DATATYPE_SNK_PDO: /*!< Handling of port Sink PDO, requested by get sink capa*/
+      USBPD_PWR_IF_GetPortPDOs(PortNum, DataId, Ptr, Size);
+      *Size *= 4;
+      break;
     default:
     DPM_USER_DEBUG_TRACE(PortNum, "ADVICE: update USBPD_DPM_GetDataInfo:%d", DataId);
     break;
@@ -402,11 +371,6 @@ void USBPD_DPM_SetDataInfo(uint8_t PortNum, USBPD_CORE_DataInfoType_TypeDef Data
   }
 /* USER CODE END USBPD_DPM_SetDataInfo */
 
-  /* Forward info to GUI if enabled */
-  if (NULL != DPM_GUI_SaveInfo)
-  {
-    DPM_GUI_SaveInfo(PortNum, DataId, Ptr, Size);
-  }
 }
 
 /**
@@ -420,12 +384,12 @@ void USBPD_DPM_SNK_EvaluateCapabilities(uint8_t PortNum, uint32_t *PtrRequestDat
 {
 /* USER CODE BEGIN USBPD_DPM_SNK_EvaluateCapabilities */
   USBPD_SNKRDO_TypeDef rdo;
-/* Initialize RDO */
+  /* Initialize RDO */
   rdo.d32 = 0;
-/* Prepare the requested pdo */
+  /* Prepare the requested pdo */
   rdo.FixedVariableRDO.ObjectPosition = 1;
-  rdo.FixedVariableRDO.OperatingCurrentIn10mAunits = 200;
-  rdo.FixedVariableRDO.MaxOperatingCurrent10mAunits = 200;
+  rdo.FixedVariableRDO.OperatingCurrentIn10mAunits = 180;   // 1.8A
+  rdo.FixedVariableRDO.MaxOperatingCurrent10mAunits = 200;  // 2.0A
   rdo.FixedVariableRDO.CapabilityMismatch = 0;
   *PtrPowerObjectType = USBPD_CORE_PDO_TYPE_FIXED;
   *PtrRequestData = rdo.d32;

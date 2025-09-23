@@ -65,7 +65,7 @@
 #define configTICK_RATE_HZ                       ((TickType_t)1000)
 #define configMAX_PRIORITIES                     ( 7 )
 #define configMINIMAL_STACK_SIZE                 ((uint16_t)128)
-#define configTOTAL_HEAP_SIZE                    ((size_t)5000)
+#define configTOTAL_HEAP_SIZE                    ((size_t)18384)
 #define configMAX_TASK_NAME_LEN                  ( 16 )
 #define configUSE_16_BIT_TICKS                   0
 #define configUSE_MUTEXES                        1
@@ -80,6 +80,12 @@
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                    0
 #define configMAX_CO_ROUTINE_PRIORITIES          ( 2 )
+
+/* Software timer definitions. */
+#define configUSE_TIMERS                         1
+#define configTIMER_TASK_PRIORITY                ( 2 )
+#define configTIMER_QUEUE_LENGTH                 10
+#define configTIMER_TASK_STACK_DEPTH             128
 
 /* The following flag must be enabled only when using newlib */
 #define configUSE_NEWLIB_REENTRANT          1

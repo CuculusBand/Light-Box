@@ -29,7 +29,16 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "beep.h"
+#include "encoder.h"
+#include "shortcut.h"
+#include "pwm_app.h"
+#include "mixedlight_switch.h"
+#include "ntc_temperature.h"
+#include "device_info.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +59,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+char msg_init[30];              // Initialization message
+char msg_UID[64];              // UID message
+extern uint32_t uid[3];         // 96 bit STM32 UID
+extern char UID_Base32[21];     // 20 chars for Base32 + 1 for null terminator
+extern char UID_Base64URL[17];  // 16 chars for Base64URL + 1 for null terminator
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,19 +109,40 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_TIM3_Init();
   MX_TIM14_Init();
-  MX_UCPD1_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM16_Init();
-  MX_TIM17_Init();
+  MX_UCPD1_Init();
   /* USER CODE BEGIN 2 */
-
+  if(factory == 1) { // Convert UID and send it to PC only in factory test mode
+    sprintf(msg_init, "INITIALIZATION SUCCESS!\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
+    uint32_t UID_ADDR= Get_UID_address(current_chip_series);
+    sprintf(msg_UID, "UID ADDR: 0x%08lX\r\n", UID_ADDR);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    Get_Chip_UID(UID_ADDR);
+    sprintf(msg_UID, "UID: %08lX-%08lX-%08lX\r\n", uid[0], uid[1], uid[2]);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base32(uid, UID_ENDIAN_LITTLE);
+    sprintf(msg_UID, "UID base32-L: %s\r\n", UID_Base32);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base32(uid, UID_ENDIAN_BIG);
+    sprintf(msg_UID, "UID base32-B: %s\r\n", UID_Base32);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base64URL(uid, UID_ENDIAN_LITTLE);
+    sprintf(msg_UID, "UID base64-L: %s\r\n", UID_Base64URL);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    UID_To_Base64URL(uid, UID_ENDIAN_BIG);
+    sprintf(msg_UID, "UID base64-B: %s\r\n", UID_Base64URL);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
+    // Beep_Blocking(20);
+  }
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/
-  MX_USBPD_Init();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  MX_USBPD_Init();
+  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
@@ -123,6 +157,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    HAL_Delay(500);
+    sprintf(msg_init, "Running FreeRTOS FAILED!\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg_init, strlen(msg_init), 100);
   }
   /* USER CODE END 3 */
 }

@@ -73,8 +73,8 @@ void Error_Handler(void);
 #define VDDA_APPLI 3300
 #define Adjustment_Target_SW_Pin GPIO_PIN_9
 #define Adjustment_Target_SW_GPIO_Port GPIOB
-#define Temp___Pin GPIO_PIN_0
-#define Temp___GPIO_Port GPIOA
+#define Temp_1_Pin GPIO_PIN_0
+#define Temp_1_GPIO_Port GPIOA
 #define Temp_2_Pin GPIO_PIN_1
 #define Temp_2_GPIO_Port GPIOA
 #define GPIO3_Pin GPIO_PIN_3
@@ -85,18 +85,12 @@ void Error_Handler(void);
 #define Mode_Change_SW_GPIO_Port GPIOA
 #define PWM2_Pin GPIO_PIN_6
 #define PWM2_GPIO_Port GPIOA
-#define PWM3_Pin GPIO_PIN_7
-#define PWM3_GPIO_Port GPIOA
 #define Beep_Ctrl_Pin GPIO_PIN_0
 #define Beep_Ctrl_GPIO_Port GPIOB
 #define VSENSE_Pin GPIO_PIN_1
 #define VSENSE_GPIO_Port GPIOB
 #define GPIO6_Pin GPIO_PIN_2
 #define GPIO6_GPIO_Port GPIOB
-#define CC1_Pin GPIO_PIN_8
-#define CC1_GPIO_Port GPIOA
-#define ENCODER2_B_Pin GPIO_PIN_6
-#define ENCODER2_B_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_9
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_10
@@ -107,13 +101,12 @@ void Error_Handler(void);
 #define ENCODER1_B_GPIO_Port GPIOB
 #define Fan_Ctrl_Pin GPIO_PIN_4
 #define Fan_Ctrl_GPIO_Port GPIOB
-#define ENCODER2_A_Pin GPIO_PIN_5
-#define ENCODER2_A_GPIO_Port GPIOB
 #define Panel_Type_Detec_Pin GPIO_PIN_8
 #define Panel_Type_Detec_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define current_chip_series "STM32G0xx" // Current chip series
+#define factory 0  // 1: factory test mode; 0: normal mode
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
