@@ -138,6 +138,10 @@ int main(void)
     HAL_UART_Transmit(&huart1, (uint8_t*)msg_UID, strlen(msg_UID), 100);
     // Beep_Blocking(20);
   }
+  Beep_Blocking(100);
+  HAL_Delay(75);
+  Beep_Blocking(100);
+  HAL_Delay(150);
   /* USER CODE END 2 */
 
   /* USBPD initialisation ---------------------------------*/

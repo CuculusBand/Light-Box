@@ -183,8 +183,7 @@ void MX_FREERTOS_Init(void) {
 void StartMainTask(void const * argument)
 {
   /* USER CODE BEGIN StartMainTask */
-  osDelay(20);
-  Beep_Blocking(60);
+  osDelay(30);
   /* Infinite loop */
   for(;;)
   {

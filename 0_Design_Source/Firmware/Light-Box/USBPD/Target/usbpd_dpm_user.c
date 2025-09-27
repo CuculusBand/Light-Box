@@ -37,6 +37,9 @@
 #endif /* _TRACE */
 /* USER CODE BEGIN Includes */
 #include "beep.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 /* USER CODE END Includes */
 
 /** @addtogroup STM32_USBPD_APPLICATION
@@ -190,10 +193,10 @@ void USBPD_DPM_UserCableDetection(uint8_t PortNum, USBPD_CAD_EVENT State)
 {
 /* USER CODE BEGIN USBPD_DPM_UserCableDetection */
 if(State == USBPD_CAD_EVENT_CABLE_ATTACHED) {
-  Beep_NonBlocking(50); // Beep for 30ms on cable attach
+  Beep_NonBlocking(15); // Beep for 15ms on cable attach
 }
 else if(State == USBPD_CAD_EVENT_CABLE_DETACHED) {
-  Beep_NonBlocking(50); // Beep for 60ms on cable detach
+  Beep_NonBlocking(15); // Beep for 15ms on cable detach
 }
 /* USER CODE END USBPD_DPM_UserCableDetection */
 }
@@ -233,11 +236,9 @@ void USBPD_DPM_Notification(uint8_t PortNum, USBPD_NotifyEventValue_TypeDef Even
 //    case USBPD_NOTIFY_POWER_EXPLICIT_CONTRACT :
 //      break;
     case USBPD_NOTIFY_REQUEST_ACCEPTED:
-      Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
-      // osDelay(100);           // Wait for the beep to finish
-      // Beep_NonBlocking(175);  // Beep for 175ms on power request accepted
-      // osDelay(225);           // Wait for the beep to finish
-      // Beep_NonBlocking(50);   // Beep for 50ms on power request accepted
+      Beep_NonBlocking(30);   // Beep for 30ms on power request accepted
+      osDelay(100);
+      Beep_NonBlocking(30);   // Beep for 30ms on power request accepted
       break;
 //    case USBPD_NOTIFY_REQUEST_REJECTED:
 //    case USBPD_NOTIFY_REQUEST_WAIT:

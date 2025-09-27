@@ -20,6 +20,7 @@
 #include "mixedlight_switch.h"
 #include "encoder.h"
 #include "pwm_app.h"
+#include "beep.h"
 
 // Queue for encoder mode switching
 extern QueueHandle_t xEncoderQueue;
@@ -108,12 +109,24 @@ void Encoder_Update(TIM_HandleTypeDef *htim_encoder)
         // Update brightness or color temperature based on current mode
         if (current_mode == MODE_Brightness) {
             brightness += delta_step;
-            if (brightness > BRIGHTNESS_MAX) brightness = BRIGHTNESS_MAX;
-            if (brightness < BRIGHTNESS_MIN) brightness = BRIGHTNESS_MIN;
+            if (brightness > BRIGHTNESS_MAX) {
+                brightness = BRIGHTNESS_MAX;
+                Beep_NonBlocking(55);
+            }
+            if (brightness < BRIGHTNESS_MIN) {
+                brightness = BRIGHTNESS_MIN;
+                Beep_NonBlocking(55);
+            }
         } else if (current_mode == MODE_Temperature) {
             cct_level += delta_step;
-            if (cct_level > CCT_LEVEL_MAX) cct_level = CCT_LEVEL_MAX;
-            if (cct_level < CCT_LEVEL_MIN) cct_level = CCT_LEVEL_MIN;
+            if (cct_level > CCT_LEVEL_MAX) {
+                cct_level = CCT_LEVEL_MAX;
+                Beep_NonBlocking(55);
+        }
+            if (cct_level < CCT_LEVEL_MIN) {
+                cct_level = CCT_LEVEL_MIN;
+                Beep_NonBlocking(55);
+        }
         }
         // Notify application layer to update PWM output
         if (Encoder_UpdateCallback) {
